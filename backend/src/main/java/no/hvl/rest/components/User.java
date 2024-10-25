@@ -1,10 +1,16 @@
 package no.hvl.rest.components;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
+@Entity
+@Table(name = "app_user")
 public class User {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long id;
     private String username; // unique, and used as id
     private String password;
     private String email;
@@ -56,6 +62,21 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(username, password, email);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Customer[id=%d, username='%s', password='%s', email='%s']",
+                id, username, password, email);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
 
