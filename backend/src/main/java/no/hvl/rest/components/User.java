@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "_user")
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

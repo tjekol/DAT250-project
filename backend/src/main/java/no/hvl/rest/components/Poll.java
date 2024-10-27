@@ -2,6 +2,7 @@ package no.hvl.rest.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -9,13 +10,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Entity
 public class Poll  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
+    private Long pId;
     @JsonIgnore private UUID id;
     private String username; // username to user who created poll
     private String question;
     private Instant publishedAt;
     private Instant validUntil;
     private boolean isPublic;
+    @OneToMany(mappedBy = "poll")
     private Set<VoteOption> voteOptions;
 
     public Poll(
