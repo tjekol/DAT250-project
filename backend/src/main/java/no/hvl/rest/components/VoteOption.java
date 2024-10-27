@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 public class VoteOption {
@@ -16,8 +15,8 @@ public class VoteOption {
     private int votes;
     private String caption;
     private int presentationOrder;
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JsonIgnore
     private Poll poll;
 
     public VoteOption(
@@ -57,6 +56,15 @@ public class VoteOption {
 
     public void setPresentationOrder(int presentationOrder) {
         this.presentationOrder = presentationOrder;
+    }
+
+    public Poll getOwningPoll() {
+        return poll;
+    }
+
+    public void setOwningPoll(Poll poll) {
+        this.poll = poll;
+        poll.getVoteOptions().add(this);
     }
 
     @Override

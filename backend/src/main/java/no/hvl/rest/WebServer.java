@@ -30,43 +30,55 @@ public class WebServer {
     */
 
     @Bean
-    public CommandLineRunner demo(UserRepository userRepo, PollRepository pollRepo, VoteOptionRepository voteOptionRepo) {
+    public CommandLineRunner demo(UserRepository userRepo, PollRepository pollRepo) {
         return (args) -> {
             VoteOption vo1 = new VoteOption("cat", 0);
             VoteOption vo2 = new VoteOption("dog", 1);
             Set<VoteOption> vos = new HashSet<>();
+
+            Poll poll = new Poll("eple", "Cat or Dog", Instant.now().plusSeconds(3600), true, vos);
             vos.add(vo1);
             vos.add(vo2);
-            Poll poll = new Poll("eple", "Cat or Dog", Instant.now().plusSeconds(3600), true, vos);
-            User eple = new User("eple", "pass1", "eple@gmail.com");
-            //poll.addUser(eple);
+            vo1.setOwningPoll(poll);
+            vo2.setOwningPoll(poll);
 
-            voteOptionRepo.save(vo1);
-            voteOptionRepo.save(vo2);
+            User eple = new User("eple", "pass1", "eple@gmail.com");
+
             pollRepo.save(poll);
             userRepo.save(eple);
             userRepo.save(new User("ananas", "pass2", "ananas@gmail.com"));
             userRepo.save(new User("tjekol", "pass", "tjekol@gmail.com"));
 
-            // fetch all customers
-            log.info("Customers found with findAll():");
+            log.info("Users found with findAll():");
             log.info("-------------------------------");
-            userRepo.findAll().forEach(customer -> {
-                log.info(customer.toString());
+            userRepo.findAll().forEach(user -> {
+                log.info(user.toString());
             });
             log.info("");
 
-            // fetch an individual customer by ID
+            log.info("Polls found with findAll():");
+            log.info("-------------------------------");
+            pollRepo.findAll().forEach(p -> {
+                log.info(p.toString());
+            });
+            log.info("");
+
             User user = userRepo.findById(1L);
             log.info("Customer found with findById(1L):");
             log.info("--------------------------------");
             log.info(user.toString());
             log.info("");
 
-            // fetch customers by last name
-            log.info("Customer found with findByLastName('Bauer'):");
+            log.info("Customer found with findByLastName('eple'):");
             log.info("--------------------------------------------");
-            userRepo.findByUsername("Jack").forEach(bauer -> {
+            userRepo.findByUsername("eple").forEach(bauer -> {
+                log.info(bauer.toString());
+            });
+            log.info("");
+
+            log.info("Poll with owner('eple'):");
+            log.info("--------------------------------------------");
+            pollRepo.findByUsername("eple").forEach(bauer -> {
                 log.info(bauer.toString());
             });
             log.info("");

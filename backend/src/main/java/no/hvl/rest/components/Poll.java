@@ -13,16 +13,15 @@ import java.util.UUID;
 @Entity
 public class Poll  {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @JsonIgnore
-    private Long pId;
-    @JsonIgnore private UUID id;
+    private UUID id;
     private String username; // username to user who created poll
     private String question;
     private Instant publishedAt;
     private Instant validUntil;
     private boolean isPublic;
-    @OneToMany(mappedBy = "poll")
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VoteOption> voteOptions;
 
     public Poll(
@@ -115,6 +114,13 @@ public class Poll  {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, question, publishedAt, validUntil, isPublic, voteOptions);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Poll[id=%s, username='%s', question='%s', isPublic='%s']",
+                id.toString(), username, question, isPublic);
     }
 }
 
