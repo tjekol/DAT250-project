@@ -2,15 +2,23 @@ package no.hvl.rest.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 public class VoteOption {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private int votes;
     private String caption;
     private int presentationOrder;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Poll poll;
 
     public VoteOption(
             @JsonProperty("caption") String caption,
