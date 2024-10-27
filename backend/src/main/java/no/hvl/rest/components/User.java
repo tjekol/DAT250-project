@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name = "_user")
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String username; // unique, and used as id
     private String password;
@@ -67,7 +67,7 @@ public class User {
     @Override
     public String toString() {
         return String.format(
-                "Customer[id=%d, username='%s', password='%s', email='%s']",
+                "_User[id=%d, username='%s', password='%s', email='%s']",
                 id, username, password, email);
     }
 
