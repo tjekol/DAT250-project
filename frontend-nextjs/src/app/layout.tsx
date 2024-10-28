@@ -1,7 +1,6 @@
 import Footer from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Params } from "@/interfaces";
-import { PageWrapper } from "@/utils/page-wrapper";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -28,11 +27,15 @@ export default async function RootLayout(props: {
       <body className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Navbar />
-          <PageWrapper>
-            {/* <Providers> TODO: Enable theme switch. MUST FIX HYDRATION MISMATCH */}
-            {children}
-            {/* </Providers> */}
-          </PageWrapper>
+          <div className="mt-4 flex min-h-screen w-full flex-col sm:mt-12">
+            <div className="sm:min-w-lg mx-auto flex w-full max-w-7xl items-center p-4">
+              <div className="flex w-full flex-col gap-10">
+                {/* <Providers> TODO: Enable theme switch. MUST FIX HYDRATION MISMATCH */}
+                {children}
+                {/* </Providers> */}
+              </div>
+            </div>
+          </div>
           <Footer />
         </NextIntlClientProvider>
       </body>
