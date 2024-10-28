@@ -1,9 +1,12 @@
 package no.hvl.rest.components;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "_user")
@@ -14,6 +17,11 @@ public class User {
     private String username; // unique, and used as id
     private String password;
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonIgnore  private Set<Poll> polls = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonIgnore private Set<Vote> votes = new HashSet<>();
 
     public User(
             @JsonProperty("username") String username,
@@ -49,6 +57,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Poll> getPolls() {
+        return polls;
+    }
+
+    public Set<Vote> getVotes() {
+        return votes;
     }
 
     @Override

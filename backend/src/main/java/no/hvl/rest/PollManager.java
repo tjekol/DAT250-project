@@ -100,7 +100,7 @@ public class PollManager {
             pollVotes.remove(pollID);
             for (Vote vote : votes.values()) {
                 if (vote.getPollID().equals(pollID)) {
-                    UUID voteID = vote.getVoteID();
+                    UUID voteID = vote.getId();
                     votes.remove(voteID);
                 }
             }
@@ -134,7 +134,7 @@ public class PollManager {
                 voter = UUID.randomUUID().toString(); // anonymous voter
                 vote.setVoter(voter);
             }
-            votes.put(vote.getVoteID(), vote);
+            votes.put(vote.getId(), vote);
             pollVotes.get(votePollID).add(vote);
             poll.getVoteOption(vote.getVoteOption()).addVote();
 
@@ -147,7 +147,7 @@ public class PollManager {
             }
             userHasVoted(vote, pollVoteSet, poll);
 
-            votes.put(vote.getVoteID(), vote);
+            votes.put(vote.getId(), vote);
             pollVoteSet.add(vote);
             pollVotes.put(votePollID, pollVoteSet);
             poll.getVoteOption(vote.getVoteOption()).addVote();
@@ -166,7 +166,7 @@ public class PollManager {
         }
 
         if (existingVote != null) { // user has voted before
-            votes.remove(existingVote.getVoteID()); // remove old vote from the map
+            votes.remove(existingVote.getId()); // remove old vote from the map
             pollVoteSet.remove(existingVote); // remove old vote from the set
             poll.getVoteOption(existingVote.getVoteOption()).removeVote();
         }
