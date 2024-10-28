@@ -3,6 +3,7 @@ package no.hvl.rest.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -21,6 +22,10 @@ public class Poll  {
     private Instant publishedAt;
     private Instant validUntil;
     private boolean isPublic;
+
+    @ManyToOne
+    @JsonIgnore private User user;
+
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VoteOption> voteOptions;
 
@@ -50,8 +55,10 @@ public class Poll  {
         return username;
     }
 
-    public void setPollCreator(String username) {
-        this.username = username;
+    @NonNull
+    public void setPollCreator(User user) {
+        this.user = user;
+        user.getPolls().add(this);
     }
 
     public String getQuestion() {
