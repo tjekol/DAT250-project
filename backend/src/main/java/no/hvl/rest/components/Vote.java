@@ -16,27 +16,31 @@ public class Vote {
     @JsonIgnore private UUID id;
     private UUID pollID;
     private String username; // user who cast a vote
-    @ManyToOne
-    @JsonIgnore private User user;
     private int voteOption;
     @JsonIgnore private Instant publishedAt;
+
+    @ManyToOne
+    @JsonIgnore private User user;
 
     public Vote(
             @JsonProperty("pollID") UUID pollID,
             @JsonProperty("username") String username,
             @JsonProperty("voteOption") int voteOption
     ) {
-        this.id = UUID.randomUUID();
         this.pollID = pollID;
         this.username = username;
         this.voteOption = voteOption;
         this.publishedAt = Instant.now();
     }
 
-    public Vote() {};
+    public Vote() {}
 
     public UUID getId() {
-        return id;
+        if (id != null) {
+            return id;
+        } else {
+            throw new IllegalStateException("Vote ID not set");
+        }
     }
 
     public UUID getPollID() {
@@ -44,7 +48,7 @@ public class Vote {
     }
 
     //** username of user who voted **//
-    public String getVoter() {
+    public String getVoterUsername() {
         if (username == null) {
             return "";
         }
@@ -53,6 +57,10 @@ public class Vote {
 
     public void setVoter(String voter) {
         this.username = voter;
+    }
+
+    public User getVoterUser() {
+        return user;
     }
 
     @NonNull
@@ -68,8 +76,6 @@ public class Vote {
     public int getVoteOption() {
         return voteOption;
     }
-
-
 
     @Override
     public boolean equals(Object o) {

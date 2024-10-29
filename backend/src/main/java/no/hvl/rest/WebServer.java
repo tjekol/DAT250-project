@@ -9,10 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-
 @SpringBootApplication
 @RestController
 public class WebServer {
@@ -32,6 +28,7 @@ public class WebServer {
     @Bean
     public CommandLineRunner demo(UserRepository userRepo, PollRepository pollRepo, VoteRepository voteRepo) {
         return (args) -> {
+            /*
             User eple = new User("eple", "pass1", "eple@gmail.com");
             User ananas = new User("ananas", "pass2", "ananas@gmail.com");
 
@@ -94,6 +91,7 @@ public class WebServer {
                 log.info(bauer.toString());
             });
             log.info("");
+             */
         };
     }
 }
