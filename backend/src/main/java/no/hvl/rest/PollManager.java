@@ -1,9 +1,7 @@
 package no.hvl.rest;
 
-import no.hvl.rest.components.Poll;
-import no.hvl.rest.components.User;
-import no.hvl.rest.components.Vote;
-import no.hvl.rest.components.VoteOption;
+import no.hvl.rest.components.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -17,7 +15,17 @@ public class PollManager {
     private final Map<UUID, User> userPolls = HashMap.newHashMap(2);
     private final Map<UUID, Set<Vote>> pollVotes = HashMap.newHashMap(2);
 
-    public PollManager() {
+    private final UserRepository userRepository;
+    private final PollRepository pollRepository;
+    private final VoteRepository voteRepository;
+    private final VoteOptionRepository voRepository;
+
+    @Autowired
+    public PollManager(UserRepository userRepository, PollRepository pollRepository, VoteRepository voteRepository, VoteOptionRepository voRepository) {
+        this.userRepository = userRepository;
+        this.pollRepository = pollRepository;
+        this.voteRepository = voteRepository;
+        this.voRepository = voRepository;
     }
 
     public Set<User> getUsers() {
@@ -66,6 +74,7 @@ public class PollManager {
             return false; // user already exists, not created
         } else {
             users.put(user.getUsername(), user);
+            userRepository.save(user);
             return true; // user is created
         }
     }
@@ -74,6 +83,7 @@ public class PollManager {
         if (username.equals("") || username == null || poll == null) {
             return false;
         }
+        pollRepository.save(poll);
 
         User creator = getUserByUsername(username);
         UUID pollID = poll.getPollID();
@@ -87,6 +97,13 @@ public class PollManager {
             polls.put(pollID, poll);
             userPolls.put(pollID, creator);
             pollVotes.put(pollID, new HashSet<>());
+
+            poll.setPollCreator(creator);
+            for (VoteOption vo : poll.getVoteOptions()) {
+                vo.setOwningPoll(poll);
+                voRepository.save(vo);
+            }
+
             return true;
         } else {
             return false;
@@ -119,6 +136,7 @@ public class PollManager {
     }
 
     public boolean castVote(Vote vote) {
+        voteRepository.save(vote);
         if (vote.getPollID() == null) {
             return false;
         }
@@ -129,7 +147,7 @@ public class PollManager {
         Poll poll = getPollByID(votePollID);
 
         if (poll.isPublic()) { // public poll
-            String voter = vote.getVoter();
+            String voter = vote.getVoterUsername();
             if (voter.equals("")) {
                 voter = UUID.randomUUID().toString(); // anonymous voter
                 vote.setVoter(voter);
@@ -146,6 +164,8 @@ public class PollManager {
                 pollVotes.put(votePollID, pollVoteSet);
             }
             userHasVoted(vote, pollVoteSet, poll);
+            User user = getUserByUsername(vote.getVoterUsername());
+            vote.setVoterUser(user);
 
             votes.put(vote.getId(), vote);
             pollVoteSet.add(vote);
@@ -159,7 +179,7 @@ public class PollManager {
     private void userHasVoted(Vote vote, Set<Vote> pollVoteSet, Poll poll) {
         Vote existingVote = null;
         for (Vote pollVote : pollVoteSet) {
-            if (pollVote.getVoter().equals(vote.getVoter())) {
+            if (pollVote.getVoterUsername().equals(vote.getVoterUsername())) {
                 existingVote = pollVote;
                 break;
             }

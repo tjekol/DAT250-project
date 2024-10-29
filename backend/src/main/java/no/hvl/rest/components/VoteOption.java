@@ -3,8 +3,8 @@ package no.hvl.rest.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
-import java.util.HashSet;
 import java.util.Objects;
 
 @Entity
@@ -16,8 +16,7 @@ public class VoteOption {
     private String caption;
     private int presentationOrder;
     @ManyToOne
-    @JsonIgnore
-    private Poll poll;
+    @JsonIgnore private Poll poll;
 
     public VoteOption(
             @JsonProperty("caption") String caption,
@@ -58,13 +57,9 @@ public class VoteOption {
         this.presentationOrder = presentationOrder;
     }
 
-    public Poll getOwningPoll() {
-        return poll;
-    }
-
+    @NonNull
     public void setOwningPoll(Poll poll) {
         this.poll = poll;
-        poll.getVoteOptions().add(this);
     }
 
     @Override

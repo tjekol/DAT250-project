@@ -35,6 +35,14 @@ public class User {
 
     public User() {};
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -85,14 +93,6 @@ public class User {
         return String.format(
                 "_User[id=%d, username='%s', password='%s', email='%s']",
                 id, username, password, email);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 }
 

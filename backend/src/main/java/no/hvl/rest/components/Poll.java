@@ -26,7 +26,7 @@ public class Poll  {
     @ManyToOne
     @JsonIgnore private User user;
 
-    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.MERGE, orphanRemoval = true)
     private Set<VoteOption> voteOptions;
 
     public Poll(
@@ -36,7 +36,6 @@ public class Poll  {
             @JsonProperty("isPublic") boolean isPublic,
             @JsonProperty("voteOptions") Set<VoteOption> voteOptions
     ) {
-        this.id = UUID.randomUUID(); // random unique ID
         this.username = username;
         this.question = question;
         this.publishedAt = Instant.now();
@@ -48,7 +47,11 @@ public class Poll  {
     public Poll() {};
 
     public UUID getPollID() {
-        return id;
+        if (id != null) {
+            return id;
+        } else {
+            throw new IllegalStateException("Poll ID not set");
+        }
     }
 
     public String getPollCreator() {

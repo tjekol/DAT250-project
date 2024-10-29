@@ -1,0 +1,167 @@
+### CREATE user1
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+  "username": "{{users.user1}}",
+  "password": "pass1",
+  "email": "{{users.user1}}@gmail.com"
+}
+
+> {%
+    client.test("User created successfully", function () {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+
+%}
+
+### LOGIN user1
+POST http://{{host}}/login
+Content-Type: application/json
+
+{
+  "username": "{{users.user1}}",
+  "password": "pass1"
+}
+
+> {%
+    client.test("User logged in successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+%}
+
+### CREATE user2
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+  "username": "{{users.user2}}",
+  "password": "pass2",
+  "email": "{{users.user2}}@gmail.com"
+}
+
+> {%
+    client.test("User created successfully", function () {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+%}
+
+### GET all users
+GET http://{{host}}/users
+
+> {%
+    client.test("User fetched successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Fetched one user", function() {
+        client.assert(response.body.length === 2, "Response is not the correct length");
+    });
+%}
+
+### CREATE user1 creates a poll with vote options.
+POST http://{{host}}/polls
+Content-Type: application/json
+
+{
+  "username": "{{users.user1}}",
+  "question": "Cat or Dog?",
+  "validUntil": "2024-12-05T12:34:56.789Z",
+  "isPublic": false,
+  "voteOptions": [
+    {
+      "caption": "Cat",
+      "presentationOrder": 0
+    },
+    {
+      "caption": "Dog",
+      "presentationOrder": 1
+    }
+  ]
+}
+
+> {%
+    client.global.set("pollID", response.body.pollID);  // store pollID in a variable from body response parameter pollID
+    client.test("User created poll successfully", function () {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+%}
+
+### GET all polls
+GET http://{{host}}/polls
+
+> {%
+    client.test("Request executed successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Fetched one poll", function() {
+        client.assert(response.body.length === 1, "Response is not the correct length");
+    });
+%}
+
+### GET specific poll by ID
+GET http://{{host}}/polls/{{pollID}}
+
+> {%
+    client.test("Fetched poll successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### GET specific voteops by pollID
+GET http://{{host}}/voteops/{{pollID}}
+
+> {%
+    client.test("Fetched poll successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### USER2 votes on poll
+POST http://{{host}}/votes
+Content-Type: application/json
+
+{
+  "pollID" :"{{pollID}}",
+  "username": "{{users.user2}}",
+  "voteOption": 0
+}
+
+> {%
+    client.test("User2 voted on poll successfully", function () {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+### GET all votes
+GET http://{{host}}/votes
+
+> {%
+    client.test("Fetched votes successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Fetched only one vote", function() {
+        client.assert(response.body.length === 1, "Response is not the correct length")
+    });
+%}
