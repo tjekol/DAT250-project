@@ -1,10 +1,12 @@
 "use client";
 import { MaxWidthWrapper } from "@/utils/max-width-wrapper";
 import { ArrowRight, Menu, X } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "./button";
+
+import { Link } from "@/utils/navigation";
+import { PATH } from "@/utils/navigation/config";
 import { ThemeSwitcher } from "./theme-switcher";
+import { Button } from "./ui/button";
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,9 +17,9 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full border-b border-gray-950 bg-black/55 backdrop-blur-lg transition-all">
+    <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full bg-blue-300/55 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
-        <div className="flex h-14 items-center justify-between border-b border-gray-950 px-2 md:px-7">
+        <div className="flex h-14 items-center justify-between px-2 md:px-7">
           <Link href="/" className="z-40 flex font-semibold">
             <span>Poll App</span>
           </Link>
@@ -26,11 +28,23 @@ export function Navbar() {
             {!user ? (
               <>
                 <ThemeSwitcher />
-                <Button variant="ghost" size="sm">
-                  Sign in
+                <Button className="w-fit" variant="ghost" asChild>
+                  <Link
+                    href={{
+                      pathname: PATH.SIGN_IN,
+                    }}
+                  >
+                    Sign in
+                  </Link>
                 </Button>
-                <Button size="sm">
-                  Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+                <Button className="w-fit" variant="ghost" asChild>
+                  <Link
+                    href={{
+                      pathname: PATH.CREATE_ACCOUNT,
+                    }}
+                  >
+                    Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
+                  </Link>
                 </Button>
               </>
             ) : (
@@ -59,7 +73,7 @@ export function Navbar() {
         </div>
 
         {menuOpen && (
-          <div className="flex flex-col space-y-4 border-t border-gray-950 bg-black/90 p-4 sm:hidden">
+          <div className="flex flex-col space-y-4 bg-blue-300/90 p-4 sm:hidden">
             <ThemeSwitcher />
             {!user ? (
               <>

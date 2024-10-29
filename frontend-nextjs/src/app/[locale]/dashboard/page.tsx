@@ -1,8 +1,21 @@
 import { Slot } from "@/components/slot";
+import { NextPageProps } from "@/interfaces/navigation";
+import { Polls } from "./polls";
 
-export default function Page() {
+export default async function Page(props: NextPageProps) {
+  // const users = await getUsers();
+  // console.log(users);
+  // const queryClient = new QueryClient();
+
+  // const users = await queryClient.prefetchQuery({
+  //   queryKey: ["users"],
+  //   queryFn: getUsers,
+  // });
+
+  // console.log(users);
   return (
     <div>
+      <Polls />
       <div className="flex justify-between">
         <h1>Header</h1>
         <h1>Header2</h1>

@@ -1,4 +1,4 @@
-import { NextPageProps } from "@/interfaces";
+import { NextPageProps } from "@/interfaces/navigation";
 
 export default async function Home(props: NextPageProps) {
   const params = await props.params;
