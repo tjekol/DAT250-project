@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createUser } from "@/services";
 import { Link } from "@/utils/navigation";
 import { PATH } from "@/utils/navigation/config";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +26,7 @@ const signUpSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-type SignUpForm = z.infer<typeof signUpSchema>;
+export type SignUpForm = z.infer<typeof signUpSchema>;
 
 export function CreateAccountForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +42,7 @@ export function CreateAccountForm() {
 
   const onSubmit = async (data: SignUpForm) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log(data);
+    await createUser(data);
     setIsLoading(false);
     setSignUpSuccess(true);
   };
@@ -103,9 +102,7 @@ export function CreateAccountForm() {
       </Card>
       {signUpSuccess && (
         <Alert className="fixed bottom-4 right-4 w-96">
-          <AlertDescription>
-            Account created successfully! Check your email for verification.
-          </AlertDescription>
+          <AlertDescription>Account created successfully!</AlertDescription>
         </Alert>
       )}
     </div>

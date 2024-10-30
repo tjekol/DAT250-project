@@ -1,3 +1,4 @@
+import { SignUpForm } from "@/app/[locale]/create-account/sign-in.form";
 import { Poll, PollOptionCreate, Polls, User, Users } from "../interfaces";
 import { api } from "./api";
 
@@ -20,7 +21,6 @@ export async function getUserInfo(userId: string) {
 }
 
 export async function getUsers() {
-  console.log("getUsers");
   try {
     const response = await api.get<Users>("/users").then((res) => res.data);
     return response;
@@ -30,9 +30,9 @@ export async function getUsers() {
   }
 }
 
-export async function createUser(user: User) {
+export async function createUser(user: SignUpForm) {
   try {
-    const response = await api.post<User>("/users", {
+    const response = await api.post<SignUpForm>("/users", {
       username: user.username,
       email: user.email,
       password: user.password,
