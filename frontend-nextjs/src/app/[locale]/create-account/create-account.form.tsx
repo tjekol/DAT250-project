@@ -20,13 +20,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-const signUpSchema = z.object({
+const createAccountSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export type SignUpForm = z.infer<typeof signUpSchema>;
+export type CreateAccountForm = z.infer<typeof createAccountSchema>;
 
 export function CreateAccountForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,11 +36,11 @@ export function CreateAccountForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<CreateAccountForm>({
+    resolver: zodResolver(createAccountSchema),
   });
 
-  const onSubmit = async (data: SignUpForm) => {
+  const onSubmit = async (data: CreateAccountForm) => {
     setIsLoading(true);
     await createUser(data);
     setIsLoading(false);
@@ -92,10 +92,10 @@ export function CreateAccountForm() {
             <Link
               className="pl-2 underline"
               href={{
-                pathname: PATH.SIGN_IN,
+                pathname: PATH.LOGIN,
               }}
             >
-              Sign in
+              Log in
             </Link>
           </p>
         </CardFooter>

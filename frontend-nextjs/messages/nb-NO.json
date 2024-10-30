@@ -1,4 +1,11 @@
 {
+  "Navbar": {
+    "login": "Logg inn",
+    "getStarted": "Kom i Gang",
+    "logout": "Logg ut",
+    "dashboard": "Dashboard",
+    "myProfile": "Min Profil"
+  },
   "HomePage": {
     "title": "Poll App",
     "submit": "Kom i gang"

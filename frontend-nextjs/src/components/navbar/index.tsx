@@ -3,19 +3,26 @@ import { MaxWidthWrapper } from "@/utils/max-width-wrapper";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
+import { getUser } from "@/hooks/get-user";
+import { logout } from "@/services";
 import { Link } from "@/utils/navigation";
 import { PATH } from "@/utils/navigation/config";
-import { ThemeSwitcher } from "./theme-switcher";
-import { Button } from "./ui/button";
+import { useTranslations } from "next-intl";
+import { ThemeSwitcher } from "../theme-switcher";
+import { Button } from "../ui/button";
 
 export function Navbar() {
+  const t = useTranslations("Navbar");
   const [menuOpen, setMenuOpen] = useState(false);
-  const user = null;
 
+  const user = getUser();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  function handleLogOut() {
+    logout();
+  }
   return (
     <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full bg-blue-300/55 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -31,10 +38,10 @@ export function Navbar() {
                 <Button className="w-fit" variant="ghost" asChild>
                   <Link
                     href={{
-                      pathname: PATH.SIGN_IN,
+                      pathname: PATH.LOGIN,
                     }}
                   >
-                    Sign in
+                    {t("login")}
                   </Link>
                 </Button>
                 <Button className="w-fit" variant="ghost" asChild>
@@ -43,17 +50,39 @@ export function Navbar() {
                       pathname: PATH.CREATE_ACCOUNT,
                     }}
                   >
-                    Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
+                    {t("getStarted")} <ArrowRight className="ml-1.5 h-5 w-5" />
                   </Link>
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm">
-                  Dashboard
+                <Button className="w-fit" variant="ghost" asChild>
+                  <Link
+                    href={{
+                      pathname: PATH.DASHBOARD,
+                    }}
+                  >
+                    {t("dashboard")}
+                  </Link>
                 </Button>
 
-                <Button>My profile</Button>
+                <Button className="w-fit" variant="ghost" asChild>
+                  <Link
+                    href={{
+                      pathname: PATH.MY_PROFILE,
+                    }}
+                  >
+                    {t("myProfile")}
+                  </Link>
+                </Button>
+
+                <Button
+                  className="w-fit"
+                  variant="ghost"
+                  onClick={handleLogOut}
+                >
+                  log out
+                </Button>
               </>
             )}
           </div>

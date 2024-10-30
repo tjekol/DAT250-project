@@ -1,4 +1,5 @@
-import { SignUpForm } from "@/app/[locale]/create-account/sign-in.form";
+import { CreateAccountForm } from "@/app/[locale]/create-account/create-account.form";
+import { LoginForm } from "@/app/[locale]/login/login.form";
 import { Poll, PollOptionCreate, Polls, User, Users } from "../interfaces";
 import { api } from "./api";
 
@@ -20,6 +21,29 @@ export async function getUserInfo(userId: string) {
   }
 }
 
+export async function login(user: LoginForm) {
+  try {
+    const response = await api.post<LoginForm>("/login", {
+      username: user.username,
+      password: user.password,
+    });
+    localStorage.setItem("userData", JSON.stringify(response.data)); // TODO: temporary solution, should use token
+    return response.data;
+  } catch (error) {
+    console.error("Failed to login:", error);
+    throw error;
+  }
+}
+
+export async function logout() {
+  try {
+    localStorage.removeItem("userData");
+  } catch (error) {
+    console.error("Failed to logout:", error);
+    throw error;
+  }
+}
+
 export async function getUsers() {
   try {
     const response = await api.get<Users>("/users").then((res) => res.data);
@@ -30,9 +54,9 @@ export async function getUsers() {
   }
 }
 
-export async function createUser(user: SignUpForm) {
+export async function createUser(user: CreateAccountForm) {
   try {
-    const response = await api.post<SignUpForm>("/users", {
+    const response = await api.post<CreateAccountForm>("/users", {
       username: user.username,
       email: user.email,
       password: user.password,

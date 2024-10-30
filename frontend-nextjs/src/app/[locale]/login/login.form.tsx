@@ -1,6 +1,5 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "@/services";
 import { Link } from "@/utils/navigation";
 import { PATH } from "@/utils/navigation/config";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,14 +18,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-const signUpSchema = z.object({
+const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-type SignUpForm = z.infer<typeof signUpSchema>;
+export type LoginForm = z.infer<typeof loginSchema>;
 
-export function SignInForm() {
+export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
 
@@ -33,15 +33,13 @@ export function SignInForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: SignUpForm) => {
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log(data);
+    await login(data);
     setIsLoading(false);
     setSignUpSuccess(true);
   };
@@ -50,7 +48,7 @@ export function SignInForm() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle>Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -73,7 +71,7 @@ export function SignInForm() {
               )}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
@@ -91,13 +89,6 @@ export function SignInForm() {
           </p>
         </CardFooter>
       </Card>
-      {signUpSuccess && (
-        <Alert className="fixed bottom-4 right-4 w-96">
-          <AlertDescription>
-            Account created successfully! Check your email for verification.
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
