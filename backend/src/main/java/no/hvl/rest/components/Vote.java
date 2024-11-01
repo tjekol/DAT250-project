@@ -59,10 +59,6 @@ public class Vote {
         this.username = voter;
     }
 
-    public User getVoterUser() {
-        return user;
-    }
-
     @NonNull
     public void setVoterUser(User user) {
         this.user = user;

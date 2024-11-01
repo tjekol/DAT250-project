@@ -19,13 +19,15 @@ public class PollManager {
     private final PollRepository pollRepository;
     private final VoteRepository voteRepository;
     private final VoteOptionRepository voRepository;
+    private final VoteOptionRepository voteOptionRepository;
 
     @Autowired
-    public PollManager(UserRepository userRepository, PollRepository pollRepository, VoteRepository voteRepository, VoteOptionRepository voRepository) {
+    public PollManager(UserRepository userRepository, PollRepository pollRepository, VoteRepository voteRepository, VoteOptionRepository voRepository, VoteOptionRepository voteOptionRepository) {
         this.userRepository = userRepository;
         this.pollRepository = pollRepository;
         this.voteRepository = voteRepository;
         this.voRepository = voRepository;
+        this.voteOptionRepository = voteOptionRepository;
     }
 
     public Set<User> getUsers() {
@@ -112,11 +114,16 @@ public class PollManager {
 
     public boolean deletePoll(UUID pollID) {
         if (pollExists(pollID)) {
+            Poll poll = getPollByID(pollID);
+            pollRepository.delete(poll);
+
             polls.remove(pollID);
             userPolls.remove(pollID);
             pollVotes.remove(pollID);
+
             for (Vote vote : votes.values()) {
                 if (vote.getPollID().equals(pollID)) {
+                    voteRepository.delete(vote);
                     UUID voteID = vote.getId();
                     votes.remove(voteID);
                 }
@@ -132,6 +139,9 @@ public class PollManager {
         votes.clear();
         userPolls.clear();
         pollVotes.clear();
+        pollRepository.deleteAll();
+        voteRepository.deleteAll();
+        voteOptionRepository.deleteAll();
         return true;
     }
 
