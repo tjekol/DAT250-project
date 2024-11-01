@@ -26,7 +26,7 @@ public class Poll  {
     @ManyToOne
     @JsonIgnore private User user;
 
-    @OneToMany(mappedBy = "poll", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VoteOption> voteOptions;
 
     public Poll(
