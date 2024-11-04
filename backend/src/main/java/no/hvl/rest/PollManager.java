@@ -8,10 +8,8 @@ import java.util.*;
 
 @Component
 public class PollManager {
-    private final Map<String, User> users = HashMap.newHashMap(2);
     private final Map<UUID, Poll> polls = HashMap.newHashMap(2);
     private final Map<UUID, Vote> votes = HashMap.newHashMap(2);
-
     private final Map<UUID, User> userPolls = HashMap.newHashMap(2);
     private final Map<UUID, Set<Vote>> pollVotes = HashMap.newHashMap(2);
 
@@ -30,8 +28,8 @@ public class PollManager {
         this.voteOptionRepository = voteOptionRepository;
     }
 
-    public Set<User> getUsers() {
-        return new HashSet<>(users.values());
+    public Iterable<User> getUsers() {
+        return userRepository.findAll();
     }
 
     public Set<Poll> getPolls() {
@@ -56,7 +54,7 @@ public class PollManager {
 
     // always check if user/poll exist before getting them
     public boolean userExists(String username) {
-        return users.containsKey(username);
+        return userRepository.findByUsername(username) != null;
     }
 
     public boolean pollExists(UUID pollID) {
@@ -64,7 +62,7 @@ public class PollManager {
     }
 
     public User getUserByUsername(String username) {
-        return users.get(username);
+        return userRepository.findByUsername(username);
     }
 
     public Poll getPollByID(UUID id) {
@@ -75,7 +73,6 @@ public class PollManager {
         if (userExists(user.getUsername())) {
             return false; // user already exists, not created
         } else {
-            users.put(user.getUsername(), user);
             userRepository.save(user);
             return true; // user is created
         }
@@ -168,20 +165,19 @@ public class PollManager {
 
             return true;
         } else { // private poll
-            Set<Vote> pollVoteSet = pollVotes.get(votePollID); // gets all votes from the same poll
-            if (pollVoteSet == null) {
-                pollVoteSet = new HashSet<>();
-                pollVotes.put(votePollID, pollVoteSet);
-            }
+            Set<Vote> pollVoteSet = pollVotes.getOrDefault(votePollID, new HashSet<>()); // gets all votes from the same poll
+            pollVotes.putIfAbsent(votePollID, pollVoteSet);
+
             userHasVoted(vote, pollVoteSet, poll);
             User user = getUserByUsername(vote.getVoterUsername());
             vote.setVoterUser(user);
 
-            votes.put(vote.getId(), vote);
+            //votes.put(vote.getId(), vote);
             pollVoteSet.add(vote);
             pollVotes.put(votePollID, pollVoteSet);
             poll.getVoteOption(vote.getVoteOption()).addVote();
         }
+        voteRepository.save(vote);
         return true; // vote was cast or updated
     }
 
