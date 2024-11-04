@@ -23,7 +23,7 @@ public class UserController {
     };
 
     @GetMapping("/users")
-    public ResponseEntity<Set<User>> getUsers() {
+    public ResponseEntity<Iterable<User>> getUsers() {
         return ResponseEntity.ok(manager.getUsers());
     }
 
