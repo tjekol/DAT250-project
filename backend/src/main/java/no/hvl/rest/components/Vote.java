@@ -77,6 +77,10 @@ public class Vote {
         return voteOption;
     }
 
+    public void setVoteOption(long voteOption) {
+        this.voteOption = voteOption;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
