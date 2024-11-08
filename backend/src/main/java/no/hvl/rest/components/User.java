@@ -19,9 +19,9 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore  private Set<Poll> polls = new HashSet<>();
+    @JsonIgnore  private final Set<Poll> polls = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore private Set<Vote> votes = new HashSet<>();
+    @JsonIgnore private final Set<Vote> votes = new HashSet<>();
 
     public User(
             @JsonProperty("username") String username,

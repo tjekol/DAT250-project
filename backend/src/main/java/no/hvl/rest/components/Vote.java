@@ -16,7 +16,7 @@ public class Vote {
     @JsonIgnore private UUID id;
     private UUID pollID;
     private String username; // user who cast a vote
-    private int voteOption;
+    private long voteOption;
     @JsonIgnore private Instant publishedAt;
 
     @ManyToOne
@@ -55,21 +55,25 @@ public class Vote {
         return username;
     }
 
-    public void setVoter(String voter) {
+    public void setVoterUsername(String voter) {
         this.username = voter;
     }
 
     @NonNull
-    public void setVoterUser(User user) {
+    public void setUser(User user) {
         this.user = user;
         user.getVotes().add(this);
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Instant getPublishedAt() {
         return publishedAt;
     }
 
-    public int getVoteOption() {
+    public long getVoteOption() {
         return voteOption;
     }
 
@@ -89,7 +93,7 @@ public class Vote {
     @Override
     public String toString() {
         return String.format(
-                "Vote[id=%s, username='%s', vo='%s', publishedAt='%s']",
-                id.toString(), username, voteOption, publishedAt.toString());
+                "Vote[id=%s, pollID='%s', username='%s', vo='%d', publishedAt='%s', user='%s']",
+                id.toString(), pollID.toString(), username, voteOption, publishedAt.toString(), user.toString());
     }
 }
