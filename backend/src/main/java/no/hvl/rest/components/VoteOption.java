@@ -29,6 +29,10 @@ public class VoteOption {
 
     public VoteOption() {};
 
+    public Long getId() {
+        return id;
+    }
+
     public int getVotes() {
         return votes;
     }

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -24,7 +23,7 @@ public class PollController {
     };
 
     @GetMapping("/polls")
-    public ResponseEntity<Set<Poll>> getPolls() {
+    public ResponseEntity<Iterable<Poll>> getPolls() {
         return ResponseEntity.ok().body(manager.getPolls());
     }
 

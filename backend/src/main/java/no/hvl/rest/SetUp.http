@@ -96,6 +96,9 @@ Content-Type: application/json
 
 > {%
     client.global.set("pollID", response.body.pollID);  // store pollID in a variable from body response parameter pollID
+    client.global.set("vo1", response.body.voteOptions[0].id)
+    client.global.set("vo2", response.body.voteOptions[1].id)
+
     client.test("User created poll successfully", function () {
         client.assert(response.status === 201, "Response status is not 201");
     });
@@ -144,12 +147,28 @@ Content-Type: application/json
 {
   "pollID" :"{{pollID}}",
   "username": "{{users.user2}}",
-  "voteOption": 0
+  "voteOption": {{vo1}}
 }
 
 > {%
     client.test("User2 voted on poll successfully", function () {
         client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+### USER2 changes vote on the same poll
+PUT http://{{host}}/votes/{{pollID}}/{{users.user2}}
+Content-Type: application/json
+
+{
+  "pollID" :"{{pollID}}",
+  "username": "{{users.user2}}",
+  "voteOption": {{vo2}}
+}
+
+> {%
+    client.test("User2 changed vote on poll successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
     });
 %}
 
@@ -163,5 +182,14 @@ GET http://{{host}}/votes
 
     client.test("Fetched only one vote", function() {
         client.assert(response.body.length === 1, "Response is not the correct length")
+    });
+%}
+
+### USER1 deletes poll
+DELETE http://{{host}}/polls/{{pollID}}
+
+> {%
+    client.test("User1 deleted poll successfully", function () {
+        client.assert(response.status === 204, "Response status is not 204");
     });
 %}

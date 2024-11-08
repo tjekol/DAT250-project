@@ -100,9 +100,10 @@ public class Poll  {
         return voteOptions;
     }
 
-    public VoteOption getVoteOption(int index) {
+    // based on id
+    public VoteOption getVoteOption(Long id) {
         for (VoteOption voteOption : voteOptions) {
-            if (voteOption.getPresentationOrder() == index) {
+            if (voteOption.getId().equals(id)) {
                 return voteOption;
             }
         }
@@ -129,8 +130,8 @@ public class Poll  {
     @Override
     public String toString() {
         return String.format(
-                "Poll[id=%s, username='%s', question='%s', isPublic='%s']",
-                id.toString(), username, question, isPublic);
+                "Poll[id=%s, username='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
+                id.toString(), username, question, publishedAt.toString(), validUntil.toString(), isPublic);
     }
 }
 

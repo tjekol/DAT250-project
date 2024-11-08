@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Set;
 
 @RestController
 //@RequestMapping("/votes")
@@ -21,7 +20,7 @@ public class VoteController {
     };
 
     @GetMapping("/votes")
-    public ResponseEntity<Set<Vote>> getVotes() {
+    public ResponseEntity<Iterable<Vote>> getVotes() {
         return ResponseEntity.ok().body(manager.getVotes());
     }
 
