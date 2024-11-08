@@ -1,5 +1,6 @@
 package no.hvl.rest;
 
+import jakarta.transaction.Transactional;
 import no.hvl.rest.components.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -118,6 +119,7 @@ public class PollManager {
         return true;
     }
 
+    @Transactional
     public boolean castVote(Vote vote) {
         if (vote.getPollID() == null) {
             return false;
@@ -139,11 +141,10 @@ public class PollManager {
             vo.addVote();
             voteOptionRepository.save(vo);
         } else { // private
-            vote.setUser(userRepository.findByUsername(vote.getVoterUsername()));
-            voteRepository.save(vote);
-            userHasVoted(vote, poll);
-
-            voteRepository.save(vote);
+            if (!userHasVoted(vote, poll)) {
+                vote.setUser(userRepository.findByUsername(vote.getVoterUsername()));
+                voteRepository.save(vote);
+            }
             VoteOption vo = poll.getVoteOption(vote.getVoteOption());
             vo.addVote();
             voteOptionRepository.save(vo);
@@ -152,16 +153,20 @@ public class PollManager {
     }
 
     // the user has already voted, remove the old vote
-    private void userHasVoted(Vote vote, Poll poll) {
-        List<Vote> userVotes = voteRepository.findByPollIDAndUsername(vote.getPollID(), vote.getVoterUsername());
+    private boolean userHasVoted(Vote vote, Poll poll) {
+        List<Vote> userVote = voteRepository.findByPollIDAndUsername(vote.getPollID(), vote.getVoterUsername());
 
-        if (!userVotes.isEmpty()) {
-            Vote existingVote = userVotes.getFirst();
-            VoteOption vo = poll.getVoteOption(existingVote.getVoteOption());
-            vo.removeVote();
-            voteOptionRepository.save(vo);
-            voteRepository.delete(existingVote);
+        if (!userVote.isEmpty()) {
+            for (Vote v : userVote) {
+                VoteOption vo = poll.getVoteOption(v.getVoteOption());
+                vo.removeVote();
+                voteOptionRepository.save(vo);
+
+                v.setVoteOption(vote.getVoteOption());
+            }
+            return true;
         }
+        return false;
     }
 
     public boolean login(String username, String password) {
