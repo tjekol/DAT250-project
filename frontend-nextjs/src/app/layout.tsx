@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
-import { Navbar } from "@/components/navbar";
 import { Params } from "@/interfaces/navigation";
+import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -27,24 +27,25 @@ export default async function RootLayout(props: {
   const queryClient = new QueryClient();
 
   return (
-    <html lang={locale}>
-      <body className={inter.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <ReactQueryClientProvider>
-            <div className="flex min-h-screen w-full flex-col">
-              <Navbar />
-              <div className="sm:min-w-lg mx-auto flex w-full max-w-7xl items-center p-4">
-                <div className="flex w-full flex-col gap-10">
-                  {/* <Providers> TODO: Enable theme switch. MUST FIX HYDRATION MISMATCH */}
-                  {children}
-                  {/* </Providers> */}
+    <ClerkProvider>
+      <html lang={locale}>
+        <body className={inter.className}>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ReactQueryClientProvider>
+              <div className="flex min-h-screen w-full flex-col">
+                <div className="sm:min-w-lg mx-auto flex w-full max-w-7xl items-center p-4">
+                  <div className="flex w-full flex-col gap-10">
+                    {/* <Providers> TODO: Enable theme switch. MUST FIX HYDRATION MISMATCH */}
+                    {children}
+                    {/* </Providers> */}
+                  </div>
                 </div>
               </div>
-            </div>
-            <Footer />
-          </ReactQueryClientProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+              <Footer />
+            </ReactQueryClientProvider>
+          </NextIntlClientProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

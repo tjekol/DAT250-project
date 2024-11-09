@@ -15,9 +15,9 @@ export const PATH = {
   HOME: "/",
   ABOUT: "/about",
   DASHBOARD: "/dashboard",
-  LOGIN: "/login",
-  CREATE_ACCOUNT: "/create-account",
-  MY_PROFILE: "/my-profile",
+  SIGN_IN: "/sign-in",
+  SIGN_UP: "/sign-up",
+  POLLS: "/polls",
 } as const;
 
 export const localePrefix = "always" satisfies LocalePrefix;
@@ -28,20 +28,24 @@ export const pathnames = {
     "en-GB": "/about",
     "nb-NO": "/om",
   },
-  "/login": {
-    "en-GB": "/login",
+  "/sign-in": {
+    "en-GB": "/sign-in",
     "nb-NO": "/logg-inn",
+  },
+  "/sign-up": {
+    "en-GB": "/sign-up",
+    "nb-NO": "/registrer-deg",
   },
   "/create-account": {
     "en-GB": "/create-account",
     "nb-NO": "/opprett-konto",
   },
-  "/my-profile": {
-    "en-GB": "/my-profile",
-    "nb-NO": "/min-profil",
-  },
   "/dashboard": {
     "en-GB": "/dashboard",
     "nb-NO": "/hjem",
+  },
+  "/polls": {
+    "en-GB": "/polls",
+    "nb-NO": "/avstemninger",
   },
 } satisfies Pathnames<typeof locales>;

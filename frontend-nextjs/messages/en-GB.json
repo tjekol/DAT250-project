@@ -1,10 +1,11 @@
 {
   "Navbar": {
-    "login": "Log in",
+    "title": "Poll App",
+    "signIn": "Sign in",
     "getStarted": "Get Started",
-    "logout": "Logout",
+    "signOut": "Sign out",
     "dashboard": "Dashboard",
-    "myProfile": "My Profile"
+    "polls": "Polls"
   },
   "HomePage": {
     "title": "Poll App",
