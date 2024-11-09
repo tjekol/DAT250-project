@@ -92,7 +92,7 @@ export function CreateAccountForm() {
             <Link
               className="pl-2 underline"
               href={{
-                pathname: PATH.LOGIN,
+                pathname: PATH.SIGN_IN,
               }}
             >
               Log in
