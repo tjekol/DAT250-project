@@ -1,0 +1,14 @@
+{
+  "Navbar": {
+    "title": "Poll App",
+    "signIn": "Logg inn",
+    "getStarted": "Kom i Gang",
+    "signOut": "Logg ut",
+    "dashboard": "Dashboard",
+    "polls": "Spørreundersøkelser"
+  },
+  "HomePage": {
+    "title": "Poll App",
+    "submit": "Kom i gang"
+  }
+}
