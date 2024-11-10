@@ -30,11 +30,11 @@ export const pathnames = {
   },
   "/sign-in": {
     "en-GB": "/sign-in",
-    "nb-NO": "/logg-inn",
+    "nb-NO": "/sign-in",
   },
   "/sign-up": {
     "en-GB": "/sign-up",
-    "nb-NO": "/registrer-deg",
+    "nb-NO": "/sign-up",
   },
   "/create-account": {
     "en-GB": "/create-account",
