@@ -109,5 +109,7 @@ public class Poll  {
     public int hashCode() {
         return Objects.hash(id, username, question, publishedAt, validUntil, isPublic, voteOptions);
     }
+
+
 }
 
