@@ -1,0 +1,14 @@
+{
+  "Navbar": {
+    "title": "Poll App",
+    "signIn": "Sign in",
+    "getStarted": "Get Started",
+    "signOut": "Sign out",
+    "dashboard": "Dashboard",
+    "polls": "Polls"
+  },
+  "HomePage": {
+    "title": "Poll App",
+    "submit": "Get Started"
+  }
+}
