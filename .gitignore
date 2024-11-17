@@ -27,6 +27,8 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+frontend-nextjs/.env.local
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -34,6 +36,7 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+
 
 ### VS Code ###
 .vscode/
