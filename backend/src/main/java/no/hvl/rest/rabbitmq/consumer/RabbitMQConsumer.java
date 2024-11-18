@@ -1,18 +1,16 @@
-package no.hvl.rest.kafka.Consumer;
+package no.hvl.rest.rabbitmq.consumer;
 
 import no.hvl.rest.components.Poll;
 import no.hvl.rest.components.Vote;
-import no.hvl.rest.components.VoteOption;
 import no.hvl.rest.metrics.AppMetrics;
-
-
 import no.hvl.rest.metrics.PollActivity;
 import no.hvl.rest.metrics.VoteActivity;
 import no.hvl.rest.mongodb.AppMetricsRepo;
 import no.hvl.rest.mongodb.PollActivityRepo;
 import no.hvl.rest.mongodb.VoteActivityRepo;
+import no.hvl.rest.rabbitmq.config.RabbitMQConfig;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class MessageConsumer {
+public class RabbitMQConsumer {
 
     private final Map<UUID, Integer> pollVoteCount = new ConcurrentHashMap<>();
 
@@ -28,16 +26,15 @@ public class MessageConsumer {
     private VoteActivityRepo voteActivityRepo;
 
     @Autowired
-    private PollActivityRepo PollActivityRepo;
+    private PollActivityRepo pollActivityRepo;
 
     @Autowired
     private AppMetricsRepo applicationMetricsRepository;
 
-    @KafkaListener(topics = "polls", groupId = "my-group-id")
+    @RabbitListener(queues = RabbitMQConfig.POLLS_QUEUE)
     public void consumePoll(Poll poll) {
         // Process poll object
         System.out.println("Received Poll: " + poll.toString());
-
 
         // Update ApplicationMetrics
         AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
@@ -48,11 +45,12 @@ public class MessageConsumer {
         applicationMetricsRepository.save(appMetrics);
 
         // Log poll creation activity
-        PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(),poll.getVoteOptions(), System.currentTimeMillis());
-        PollActivityRepo.save(activity);
+        PollActivity activity = new PollActivity(poll.getPollCreator(), poll.getPollID().toString(),
+                poll.getVoteOptions(), System.currentTimeMillis());
+        pollActivityRepo.save(activity);
     }
 
-    @KafkaListener(topics = "votes", groupId = "my-group-id")
+    @RabbitListener(queues = RabbitMQConfig.VOTES_QUEUE)
     public void consumeVote(Vote vote) {
         // Process vote object
         System.out.println("Received Vote: " + vote.toString());
@@ -60,11 +58,9 @@ public class MessageConsumer {
         // Update vote count
         pollVoteCount.merge(vote.getPollID(), 1, Integer::sum);
 
-        // Update PollMetrics
-        String pollId = vote.getPollID().toString();
-        Integer voteoption = vote.getVoteOption();
         // Log user activity
-        VoteActivity activity = new VoteActivity(vote.getVoter(), pollId, voteoption ,System.currentTimeMillis());
+        VoteActivity activity = new VoteActivity(vote.getVoter(), vote.getPollID().toString(),
+                vote.getVoteOption(), System.currentTimeMillis());
         voteActivityRepo.save(activity);
 
         // Update ApplicationMetrics
@@ -74,7 +70,7 @@ public class MessageConsumer {
         appMetrics.setTotalVotes(appMetrics.getTotalVotes() + 1);
         applicationMetricsRepository.save(appMetrics);
 
-        System.out.println("Vote count updated for Poll ID " + pollId + ": " + pollVoteCount.get(vote.getPollID()));
+        System.out.println("Vote count updated for Poll ID " + vote.getPollID() + ": " + pollVoteCount.get(vote.getPollID()));
     }
 
     public Map<UUID, Integer> getPollVoteCount() {

@@ -40,6 +40,10 @@ public class Poll  {
         return id;
     }
 
+    public void setVoteOptions(Set<VoteOption> voteOptions) {
+        this.voteOptions = voteOptions;
+    }
+
     public String getPollCreator() {
         return username;
     }

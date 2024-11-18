@@ -2,7 +2,7 @@ package no.hvl.rest.controllers;
 
 import no.hvl.rest.PollManager;
 import no.hvl.rest.components.Vote;
-import no.hvl.rest.kafka.Producer.MessageProducer;
+import no.hvl.rest.rabbitmq.producer.RabbitMQProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import java.util.Set;
 public class VoteController {
 
     private final PollManager manager;
-    private final MessageProducer messageProducer;
+    private final RabbitMQProducer rabbitMQProducer;
     @Autowired
-    public VoteController(PollManager manager, MessageProducer messageProducer) {
+    public VoteController(PollManager manager, RabbitMQProducer rabbitMQProducer) {
         this.manager = manager;
-        this.messageProducer = messageProducer;
+        this.rabbitMQProducer = rabbitMQProducer;
     };
 
     @GetMapping("/votes")
@@ -31,7 +31,7 @@ public class VoteController {
     @PostMapping("/votes")
     public ResponseEntity<Vote> castVote(@RequestBody Vote vote) {
         if (manager.castVote(vote)) {
-            messageProducer.sendMessage("votes", vote);
+            rabbitMQProducer.sendVote(vote);
             return ResponseEntity.created(URI.create("/"+vote.getVoter()+"/"+vote.getPollID())).body(vote);
         } else {
             return ResponseEntity.notFound().build();
