@@ -185,6 +185,16 @@ GET http://{{host}}/votes
     });
 %}
 
+### Anonym user votes on the same poll
+POST http://{{host}}/votes
+Content-Type: application/json
+
+{
+  "pollID" :"{{pollID}}",
+  "username": null,
+  "voteOption": {{vo1}}
+}
+
 ### USER1 deletes poll
 DELETE http://{{host}}/polls/{{pollID}}
 
