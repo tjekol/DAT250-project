@@ -239,7 +239,7 @@ DELETE http://{{host}}/polls
 %}
 
 ### Anonym user votes on the same poll
-POST http://{{host}}/polls/{{pollID}}
+POST http://{{host}}/votes
 Content-Type: application/json
 
 {
