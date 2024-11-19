@@ -5,7 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.UUID;
 
-
 public interface VoteRepository extends CrudRepository<Vote, Long> {
     List<Vote> findByUsername(String username);
 

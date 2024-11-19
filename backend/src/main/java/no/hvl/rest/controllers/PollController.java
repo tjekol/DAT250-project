@@ -2,7 +2,6 @@ package no.hvl.rest.controllers;
 
 import no.hvl.rest.PollManager;
 import no.hvl.rest.components.Poll;
-import no.hvl.rest.components.Vote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
