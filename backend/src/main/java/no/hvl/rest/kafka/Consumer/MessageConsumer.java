@@ -2,10 +2,7 @@ package no.hvl.rest.kafka.Consumer;
 
 import no.hvl.rest.components.Poll;
 import no.hvl.rest.components.Vote;
-import no.hvl.rest.components.VoteOption;
 import no.hvl.rest.metrics.AppMetrics;
-import java.time.LocalDateTime;
-
 import no.hvl.rest.metrics.PollActivity;
 import no.hvl.rest.metrics.VoteActivity;
 import no.hvl.rest.mongodb.AppMetricsRepo;
@@ -15,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,53 +26,60 @@ public class MessageConsumer {
     private VoteActivityRepo voteActivityRepo;
 
     @Autowired
-    private PollActivityRepo PollActivityRepo;
+    private PollActivityRepo pollActivityRepo;
 
     @Autowired
     private AppMetricsRepo applicationMetricsRepository;
 
     @KafkaListener(topics = "polls", groupId = "my-group-id")
     public void consumePoll(Poll poll) {
-        // Process poll object
-        LocalDateTime now = LocalDateTime.now();
-        //System.out.println("Received Poll: " + poll.toString() + " at " + now);
+        try {
+            // Process poll object
+            LocalDateTime now = LocalDateTime.now();
+            System.out.println("Received Poll: " + poll.toString() + " at " + now);
 
-        // Update ApplicationMetrics
-        AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
-                .orElse(new AppMetrics());
-        appMetrics.setTotalUsers(appMetrics.getTotalUsers() + 1);
-        appMetrics.setTotalPolls(appMetrics.getTotalPolls() + 1);
-        appMetrics.setLastUpdated(System.currentTimeMillis());
-        applicationMetricsRepository.save(appMetrics);
+            // Update ApplicationMetrics
+            AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
+                    .orElse(new AppMetrics());
+            appMetrics.setTotalUsers(appMetrics.getTotalUsers() + 1);
+            appMetrics.setTotalPolls(appMetrics.getTotalPolls() + 1);
+            appMetrics.setLastUpdated(System.currentTimeMillis());
+            applicationMetricsRepository.save(appMetrics);
 
-        // Log poll creation activity
-        PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(),poll.getVoteOptions(), System.currentTimeMillis());
-        //PollActivityRepo.save(activity);
+            // Log poll creation activity
+            PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(),poll.getVoteOptions(), System.currentTimeMillis());
+            pollActivityRepo.save(activity);
+        } catch (Exception e) {
+            System.err.println("Error consuming poll: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @KafkaListener(topics = "votes", groupId = "my-group-id")
     public void consumeVote(Vote vote) {
-        // Process vote object
-        System.out.println("Received Vote: " + vote.toString());
+        try {
+            // Process vote object
+            System.out.println("Received Vote: " + vote.toString());
 
-        // Update vote count
-        pollVoteCount.merge(vote.getPollID(), 1, Integer::sum);
+            // Update vote count
+            pollVoteCount.merge(vote.getPollID(), 1, Integer::sum);
 
-        // Update PollMetrics
-        String pollId = vote.getPollID().toString();
-        Integer voteoption = vote.getVoteOption();
-        // Log user activity
-        VoteActivity activity = new VoteActivity(vote.getVoter(), pollId, voteoption ,System.currentTimeMillis());
-        voteActivityRepo.save(activity);
+            // Log user activity
+            VoteActivity activity = new VoteActivity(vote.getVoter(), vote.getPollID().toString(), vote.getVoteOption(), System.currentTimeMillis());
+            voteActivityRepo.save(activity);
 
-        // Update ApplicationMetrics
-        AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
-                .orElse(new AppMetrics());
-        appMetrics.setLastUpdated(System.currentTimeMillis());
-        appMetrics.setTotalVotes(appMetrics.getTotalVotes() + 1);
-        applicationMetricsRepository.save(appMetrics);
+            // Update ApplicationMetrics
+            AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
+                    .orElse(new AppMetrics());
+            appMetrics.setLastUpdated(System.currentTimeMillis());
+            appMetrics.setTotalVotes(appMetrics.getTotalVotes() + 1);
+            applicationMetricsRepository.save(appMetrics);
 
-        System.out.println("Vote count updated for Poll ID " + pollId + ": " + pollVoteCount.get(vote.getPollID()));
+            System.out.println("Vote count updated for Poll ID " + vote.getPollID() + ": " + pollVoteCount.get(vote.getPollID()));
+        } catch (Exception e) {
+            System.err.println("Error consuming vote: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public Map<UUID, Integer> getPollVoteCount() {
