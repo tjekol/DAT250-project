@@ -12,7 +12,7 @@ import no.hvl.rest.rabbitmq.config.RabbitMQConfig;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +34,8 @@ public class RabbitMQConsumer {
     @RabbitListener(queues = RabbitMQConfig.POLLS_QUEUE)
     public void consumePoll(Poll poll) {
         // Process poll object
-        System.out.println("Received Poll: " + poll.toString());
+
+        System.out.println("Received Poll: " + poll.toString() + " at " + LocalDateTime.now());
 
         // Update ApplicationMetrics
         AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
@@ -47,7 +48,7 @@ public class RabbitMQConsumer {
         // Log poll creation activity
         PollActivity activity = new PollActivity(poll.getPollCreator(), poll.getPollID().toString(),
                 poll.getVoteOptions(), System.currentTimeMillis());
-        pollActivityRepo.save(activity);
+        //pollActivityRepo.save(activity);
     }
 
     @RabbitListener(queues = RabbitMQConfig.VOTES_QUEUE)

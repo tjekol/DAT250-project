@@ -3,7 +3,7 @@ package no.hvl.rest.controllers;
 import no.hvl.rest.PollManager;
 import no.hvl.rest.components.Poll;
 import no.hvl.rest.components.Vote;
-
+import java.time.LocalDateTime;
 import no.hvl.rest.components.VoteOption;
 import no.hvl.rest.rabbitmq.producer.RabbitMQProducer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +47,8 @@ public class PollController {
 
     @PostMapping("/polls/bulk")
     public ResponseEntity<String> sendBulkPolls(@RequestParam int count) {
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("Sending " + count + " bulk polls at " + now);
         for (int i = 0; i < count; i++) {
             Poll poll = new Poll();
             poll.setQuestion("Bulk Poll " + i);
