@@ -4,7 +4,7 @@ import no.hvl.rest.components.Poll;
 import no.hvl.rest.components.Vote;
 import no.hvl.rest.components.VoteOption;
 import no.hvl.rest.metrics.AppMetrics;
-
+import java.time.LocalDateTime;
 
 import no.hvl.rest.metrics.PollActivity;
 import no.hvl.rest.metrics.VoteActivity;
@@ -36,8 +36,8 @@ public class MessageConsumer {
     @KafkaListener(topics = "polls", groupId = "my-group-id")
     public void consumePoll(Poll poll) {
         // Process poll object
-        System.out.println("Received Poll: " + poll.toString());
-
+        LocalDateTime now = LocalDateTime.now();
+        //System.out.println("Received Poll: " + poll.toString() + " at " + now);
 
         // Update ApplicationMetrics
         AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
@@ -49,7 +49,7 @@ public class MessageConsumer {
 
         // Log poll creation activity
         PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(),poll.getVoteOptions(), System.currentTimeMillis());
-        PollActivityRepo.save(activity);
+        //PollActivityRepo.save(activity);
     }
 
     @KafkaListener(topics = "votes", groupId = "my-group-id")

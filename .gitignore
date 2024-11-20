@@ -30,6 +30,7 @@ out/
 frontend-nextjs/.env.local
 
 
+kafka_2.13-3.8.0
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

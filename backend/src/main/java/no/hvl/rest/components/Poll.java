@@ -111,5 +111,8 @@ public class Poll  {
     }
 
 
+    public void setVoteOptions(Set<VoteOption> voteOptions) {
+        this.voteOptions = voteOptions;
+    }
 }
 
