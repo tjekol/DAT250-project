@@ -12,15 +12,18 @@ public class PollManager {
     private final UserRepository userRepository;
     private final PollRepository pollRepository;
     private final VoteRepository voteRepository;
-    private final VoteOptionRepository voRepository;
     private final VoteOptionRepository voteOptionRepository;
 
     @Autowired
-    public PollManager(UserRepository userRepository, PollRepository pollRepository, VoteRepository voteRepository, VoteOptionRepository voRepository, VoteOptionRepository voteOptionRepository) {
+    public PollManager(
+            UserRepository userRepository,
+            PollRepository pollRepository,
+            VoteRepository voteRepository,
+            VoteOptionRepository voteOptionRepository
+    ) {
         this.userRepository = userRepository;
         this.pollRepository = pollRepository;
         this.voteRepository = voteRepository;
-        this.voRepository = voRepository;
         this.voteOptionRepository = voteOptionRepository;
     }
 
@@ -88,7 +91,7 @@ public class PollManager {
             poll.setPollCreator(creator);
             for (VoteOption vo : poll.getVoteOptions()) {
                 vo.setOwningPoll(poll);
-                voRepository.save(vo);
+                voteOptionRepository.save(vo);
             }
             return true;
         } else {
@@ -116,6 +119,11 @@ public class PollManager {
         pollRepository.deleteAll();
         voteRepository.deleteAll();
         voteOptionRepository.deleteAll();
+        return true;
+    }
+
+    public boolean deleteAllUsers() {
+        userRepository.deleteAll();
         return true;
     }
 
