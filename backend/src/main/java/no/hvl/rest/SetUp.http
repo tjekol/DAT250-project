@@ -203,3 +203,12 @@ DELETE http://{{host}}/polls/{{pollID}}
         client.assert(response.status === 204, "Response status is not 204");
     });
 %}
+
+### DELETE all users
+DELETE http://{{host}}/users
+
+> {%
+    client.test("User1 deleted poll successfully", function () {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}

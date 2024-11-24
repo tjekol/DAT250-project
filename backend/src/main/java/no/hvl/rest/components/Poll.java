@@ -27,7 +27,7 @@ public class Poll  {
     @JsonIgnore private User user;
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<VoteOption> voteOptions;
+    private Set<VoteOption> voteOptions = new HashSet<>();
 
     public Poll(
             @JsonProperty("username") String username,
@@ -46,12 +46,20 @@ public class Poll  {
 
     public Poll() {};
 
+    public void setID() {
+        this.id = UUID.randomUUID();
+    }
+
     public UUID getPollID() {
         if (id != null) {
             return id;
         } else {
             throw new IllegalStateException("Poll ID not set");
         }
+    }
+
+    public void setPollUsername(String username) {
+        this.username = username;
     }
 
     public String getPollCreator() {
