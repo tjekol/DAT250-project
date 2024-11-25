@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  rabbitmq1:
+    image: rabbitmq:3.11-management
+    hostname: rabbitmq1
+    container_name: rabbitmq1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'secretcookie'
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_NODENAME: 'rabbit@rabbitmq1'
+    ports:
+      - "15672:15672"  # Management UI
+      - "5672:5672"    # AMQP
+    volumes:
+      - rabbitmq1-data:/var/lib/rabbitmq
+    networks:
+      rabbitmq_net:
+        ipv4_address: 172.28.0.2
+
+  rabbitmq2:
+    image: rabbitmq:3.11-management
+    hostname: rabbitmq2
+    container_name: rabbitmq2
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'secretcookie'
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_NODENAME: 'rabbit@rabbitmq2'
+    depends_on:
+      - rabbitmq1
+    ports:
+      - "15673:15672"
+      - "5673:5672"
+    volumes:
+      - rabbitmq2-data:/var/lib/rabbitmq
+    networks:
+      rabbitmq_net:
+        ipv4_address: 172.28.0.3
+
+  rabbitmq3:
+    image: rabbitmq:3.11-management
+    hostname: rabbitmq3
+    container_name: rabbitmq3
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'secretcookie'
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_NODENAME: 'rabbit@rabbitmq3'
+    depends_on:
+      - rabbitmq1
+    ports:
+      - "15674:15672"
+      - "5674:5672"
+    volumes:
+      - rabbitmq3-data:/var/lib/rabbitmq
+    networks:
+      rabbitmq_net:
+        ipv4_address: 172.28.0.4
+
+volumes:
+  rabbitmq1-data:
+  rabbitmq2-data:
+  rabbitmq3-data:
+
+networks:
+  rabbitmq_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

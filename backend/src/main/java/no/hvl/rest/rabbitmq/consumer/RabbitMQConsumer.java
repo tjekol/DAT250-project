@@ -48,7 +48,7 @@ public class RabbitMQConsumer {
         // Log poll creation activity
         PollActivity activity = new PollActivity(poll.getPollCreator(), poll.getPollID().toString(),
                 poll.getVoteOptions(), System.currentTimeMillis());
-        //pollActivityRepo.save(activity);
+        pollActivityRepo.save(activity);
     }
 
     @RabbitListener(queues = RabbitMQConfig.VOTES_QUEUE)
