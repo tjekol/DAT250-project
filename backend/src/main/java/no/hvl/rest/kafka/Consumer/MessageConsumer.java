@@ -65,7 +65,7 @@ public class MessageConsumer {
             pollVoteCount.merge(vote.getPollID(), 1, Integer::sum);
 
             // Log user activity
-            VoteActivity activity = new VoteActivity(vote.getVoter(), vote.getPollID().toString(), vote.getVoteOption(), System.currentTimeMillis());
+            VoteActivity activity = new VoteActivity(vote.getVoterUsername(), vote.getPollID().toString(), vote.getVoteOption(), System.currentTimeMillis());
             voteActivityRepo.save(activity);
 
             // Update ApplicationMetrics
