@@ -54,23 +54,7 @@ public class PollController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping("/polls/bulk")
-    public ResponseEntity<String> sendBulkPolls(@RequestParam int count) {
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("Sending " + count + " bulk polls at " + now);
-        for (int i = 0; i < count; i++) {
-            Poll poll = new Poll();
-            poll.setQuestion("Bulk Poll " + i);
-            poll.setPollCreator("Bulk Poll Creator");
-            poll.setValidUntil(null);
-            poll.setVoteOptions(new HashSet<>());
-            poll.addVoteOption(new VoteOption("Option 1",0));
-            poll.addVoteOption(new VoteOption("Option 2",0));
-            poll.addVoteOption(new VoteOption("Option 3",0));
-            messageProducer.sendMessage("polls", poll);
-        }
-        return ResponseEntity.ok("Bulk polls sent.");
-    }
+
     @DeleteMapping("/polls/{id}")
     public ResponseEntity<HttpStatus> deletePoll(@PathVariable UUID id) {
         if (manager.deletePoll(id)) {
