@@ -1,71 +1,78 @@
 package no.hvl.rest;
 
-import no.hvl.rest.components.Poll;
-import no.hvl.rest.components.User;
-import no.hvl.rest.components.Vote;
-import no.hvl.rest.components.VoteOption;
+import jakarta.transaction.Transactional;
+import no.hvl.rest.components.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 public class PollManager {
-    private final Map<String, User> users = HashMap.newHashMap(2);
-    private final Map<UUID, Poll> polls = HashMap.newHashMap(2);
-    private final Map<UUID, Vote> votes = HashMap.newHashMap(2);
+    private final UserRepository userRepository;
+    private final PollRepository pollRepository;
+    private final VoteRepository voteRepository;
+    private final VoteOptionRepository voteOptionRepository;
 
-    private final Map<UUID, User> userPolls = HashMap.newHashMap(2);
-    private final Map<UUID, Set<Vote>> pollVotes = HashMap.newHashMap(2);
-
-    public PollManager() {
+    @Autowired
+    public PollManager(
+            UserRepository userRepository,
+            PollRepository pollRepository,
+            VoteRepository voteRepository,
+            VoteOptionRepository voteOptionRepository
+    ) {
+        this.userRepository = userRepository;
+        this.pollRepository = pollRepository;
+        this.voteRepository = voteRepository;
+        this.voteOptionRepository = voteOptionRepository;
     }
 
-    public Set<User> getUsers() {
-        return new HashSet<>(users.values());
+    public Iterable<User> getUsers() {
+        return userRepository.findAll();
     }
 
-    public Set<Poll> getPolls() {
-        return new HashSet<>(polls.values());
+    public Iterable<Poll> getPolls() {
+        return pollRepository.findAll();
     }
 
-    public Set<Vote> getVotes() {
-        return new HashSet<>(votes.values());
+    public Iterable<Vote> getVotes() {
+        return voteRepository.findAll();
     }
 
-    public Set<VoteOption> getVoteOptions() {
+    public Iterable<VoteOption> getVoteOptions() {
         Set<VoteOption> vos = new HashSet<>();
-        for (Poll poll : polls.values()) {
+        for (Poll poll : pollRepository.findAll()) {
             vos.addAll(poll.getVoteOptions());
         }
         return vos;
     }
 
-    public Set<VoteOption> getVoteOptions(UUID pollID) {
+    public Iterable<VoteOption> getVoteOptions(UUID pollID) {
         return getPollByID(pollID).getVoteOptions();
     }
 
     // always check if user/poll exist before getting them
     public boolean userExists(String username) {
-        return users.containsKey(username);
+        return userRepository.findByUsername(username) != null;
     }
 
     public boolean pollExists(UUID pollID) {
-        return polls.containsKey(pollID);
+        return pollRepository.findById(pollID) != null;
     }
 
     public User getUserByUsername(String username) {
-        return users.get(username);
+        return userRepository.findByUsername(username);
     }
 
     public Poll getPollByID(UUID id) {
-        return polls.get(id);
+        return pollRepository.findById(id);
     }
 
     public boolean createUser(User user) {
         if (userExists(user.getUsername())) {
             return false; // user already exists, not created
         } else {
-            users.put(user.getUsername(), user);
+            userRepository.save(user);
             return true; // user is created
         }
     }
@@ -74,19 +81,18 @@ public class PollManager {
         if (username.equals("") || username == null || poll == null) {
             return false;
         }
-
         User creator = getUserByUsername(username);
-        UUID pollID = poll.getPollID();
-
         if (creator == null) {
             return false;
         }
 
         if (userExists(creator.getUsername())) {
-            // all polls are unique, therefore no conflicts
-            polls.put(pollID, poll);
-            userPolls.put(pollID, creator);
-            pollVotes.put(pollID, new HashSet<>());
+            pollRepository.save(poll);
+            poll.setPollCreator(creator);
+            for (VoteOption vo : poll.getVoteOptions()) {
+                vo.setOwningPoll(poll);
+                voteOptionRepository.save(vo);
+            }
             return true;
         } else {
             return false;
@@ -95,13 +101,12 @@ public class PollManager {
 
     public boolean deletePoll(UUID pollID) {
         if (pollExists(pollID)) {
-            polls.remove(pollID);
-            userPolls.remove(pollID);
-            pollVotes.remove(pollID);
-            for (Vote vote : votes.values()) {
+            Poll poll = getPollByID(pollID);
+            pollRepository.delete(poll);
+
+            for (Vote vote : voteRepository.findAll()) {
                 if (vote.getPollID().equals(pollID)) {
-                    UUID voteID = vote.getVoteID();
-                    votes.remove(voteID);
+                    voteRepository.delete(vote);
                 }
             }
             return true;
@@ -111,13 +116,18 @@ public class PollManager {
     }
 
     public boolean deleteAllPolls() {
-        polls.clear();
-        votes.clear();
-        userPolls.clear();
-        pollVotes.clear();
+        pollRepository.deleteAll();
+        voteRepository.deleteAll();
+        voteOptionRepository.deleteAll();
         return true;
     }
 
+    public boolean deleteAllUsers() {
+        userRepository.deleteAll();
+        return true;
+    }
+
+    @Transactional
     public boolean castVote(Vote vote) {
         if (vote.getPollID() == null) {
             return false;
@@ -128,48 +138,43 @@ public class PollManager {
         }
         Poll poll = getPollByID(votePollID);
 
-        if (poll.isPublic()) { // public poll
-            String voter = vote.getVoter();
-            if (voter.equals("")) {
-                voter = UUID.randomUUID().toString(); // anonymous voter
-                vote.setVoter(voter);
+        if (poll.isPublic()) {
+            String voter = vote.getVoterUsername();
+            if (voter.equals("")) { // no voter then anonymous voter
+                voter = UUID.randomUUID().toString();
+                vote.setVoterUsername(voter);
             }
-            votes.put(vote.getVoteID(), vote);
-            pollVotes.get(votePollID).add(vote);
-            poll.getVoteOption(vote.getVoteOption()).addVote();
-
-            return true;
-        } else { // private poll
-            Set<Vote> pollVoteSet = pollVotes.get(votePollID); // gets all votes from the same poll
-            if (pollVoteSet == null) {
-                pollVoteSet = new HashSet<>();
-                pollVotes.put(votePollID, pollVoteSet);
+            voteRepository.save(vote);
+            VoteOption vo = poll.getVoteOption(vote.getVoteOption());
+            vo.addVote();
+            voteOptionRepository.save(vo);
+        } else { // private
+            if (!userHasVoted(vote, poll)) {
+                vote.setUser(userRepository.findByUsername(vote.getVoterUsername()));
+                voteRepository.save(vote);
             }
-            userHasVoted(vote, pollVoteSet, poll);
-
-            votes.put(vote.getVoteID(), vote);
-            pollVoteSet.add(vote);
-            pollVotes.put(votePollID, pollVoteSet);
-            poll.getVoteOption(vote.getVoteOption()).addVote();
+            VoteOption vo = poll.getVoteOption(vote.getVoteOption());
+            vo.addVote();
+            voteOptionRepository.save(vo);
         }
         return true; // vote was cast or updated
     }
 
     // the user has already voted, remove the old vote
-    private void userHasVoted(Vote vote, Set<Vote> pollVoteSet, Poll poll) {
-        Vote existingVote = null;
-        for (Vote pollVote : pollVoteSet) {
-            if (pollVote.getVoter().equals(vote.getVoter())) {
-                existingVote = pollVote;
-                break;
-            }
-        }
+    private boolean userHasVoted(Vote vote, Poll poll) {
+        List<Vote> userVote = voteRepository.findByPollIDAndUsername(vote.getPollID(), vote.getVoterUsername());
 
-        if (existingVote != null) { // user has voted before
-            votes.remove(existingVote.getVoteID()); // remove old vote from the map
-            pollVoteSet.remove(existingVote); // remove old vote from the set
-            poll.getVoteOption(existingVote.getVoteOption()).removeVote();
+        if (!userVote.isEmpty()) {
+            for (Vote v : userVote) {
+                VoteOption vo = poll.getVoteOption(v.getVoteOption());
+                vo.removeVote();
+                voteOptionRepository.save(vo);
+
+                v.setVoteOption(vote.getVoteOption());
+            }
+            return true;
         }
+        return false;
     }
 
     public boolean login(String username, String password) {

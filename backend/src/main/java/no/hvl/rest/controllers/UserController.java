@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Set;
 
 @RestController
 //@RequestMapping("/users")
@@ -23,7 +22,7 @@ public class UserController {
     };
 
     @GetMapping("/users")
-    public ResponseEntity<Set<User>> getUsers() {
+    public ResponseEntity<Iterable<User>> getUsers() {
         return ResponseEntity.ok(manager.getUsers());
     }
 
@@ -54,5 +53,15 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping("/users")
+    public ResponseEntity<HttpStatus> deleteAllUsers() {
+        if (manager.deleteAllUsers()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+        }
+
     }
 }

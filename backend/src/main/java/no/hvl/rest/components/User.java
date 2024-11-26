@@ -1,13 +1,27 @@
 package no.hvl.rest.components;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+@Entity
+@Table(name = "_user")
 public class User {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
     private String username; // unique, and used as id
     private String password;
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore  private final Set<Poll> polls = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore private final Set<Vote> votes = new HashSet<>();
 
     public User(
             @JsonProperty("username") String username,
@@ -20,6 +34,14 @@ public class User {
     }
 
     public User() {};
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public String getUsername() {
         return username;
@@ -45,6 +67,14 @@ public class User {
         this.email = email;
     }
 
+    public Set<Poll> getPolls() {
+        return polls;
+    }
+
+    public Set<Vote> getVotes() {
+        return votes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,6 +86,13 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(username, password, email);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "_User[id=%d, username='%s', password='%s', email='%s']",
+                id, username, password, email);
     }
 }
 

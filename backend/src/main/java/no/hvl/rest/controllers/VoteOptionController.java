@@ -1,13 +1,11 @@
 package no.hvl.rest.controllers;
 
 import no.hvl.rest.PollManager;
-import no.hvl.rest.components.Vote;
 import no.hvl.rest.components.VoteOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -21,12 +19,12 @@ public class VoteOptionController {
     };
 
     @GetMapping("/voteops")
-    public ResponseEntity<Set<VoteOption>> getVotes() {
+    public ResponseEntity<Iterable<VoteOption>> getVotes() {
         return ResponseEntity.ok().body(manager.getVoteOptions());
     }
 
     @GetMapping("/voteops/{id}")
-    public ResponseEntity<Set<VoteOption>> changeVote(@PathVariable UUID id) {
+    public ResponseEntity<Iterable<VoteOption>> changeVote(@PathVariable UUID id) {
         return ResponseEntity.ok().body(manager.getVoteOptions(id));
     }
 }

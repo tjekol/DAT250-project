@@ -2,15 +2,21 @@ package no.hvl.rest.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
+@Entity
 public class VoteOption {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private int votes;
     private String caption;
     private int presentationOrder;
+    @ManyToOne
+    @JsonIgnore private Poll poll;
 
     public VoteOption(
             @JsonProperty("caption") String caption,
@@ -22,6 +28,14 @@ public class VoteOption {
     }
 
     public VoteOption() {};
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public int getVotes() {
         return votes;
@@ -49,6 +63,11 @@ public class VoteOption {
 
     public void setPresentationOrder(int presentationOrder) {
         this.presentationOrder = presentationOrder;
+    }
+
+    @NonNull
+    public void setOwningPoll(Poll poll) {
+        this.poll = poll;
     }
 
     @Override

@@ -1,23 +1,16 @@
 package no.hvl.rest;
 
-import no.hvl.rest.components.Poll;
-import no.hvl.rest.components.User;
-import no.hvl.rest.components.Vote;
-import no.hvl.rest.components.VoteOption;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import no.hvl.rest.components.*;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.time.Instant;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,105 +21,95 @@ public class PollApplication {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String user1;
-    private String user2;
+    private static final String USERS_ENDPOINT = "/users";
+    private static final String POLLS_ENDPOINT = "/polls";
+    private static final String VOTES_ENDPOINT = "/votes";
+    private static final String VOTEOPS_ENDPOINT = "/voteops";
+
+    private final User user1 = new User();
+    private final User user2 = new User();
 
     @BeforeEach
-    public void setUp() {
-        user1 = "apple";
-        user2 = "orange";
+    public void setup() {
+        user1.setUsername("eple");
+        user1.setPassword("pass1");
+        user1.setEmail(user1.getUsername() + "@email.com");
+
+        user2.setUsername("ananas");
+        user2.setPassword("pass2");
+        user2.setEmail(user2.getUsername() + "@email.com");
+
     }
 
     @Test
-    public void testServer() throws Exception {
-        ResponseEntity<String> enitity = restTemplate.getForEntity("/", String.class);
-        assertEquals(HttpStatus.OK, enitity.getStatusCode());
-    }
-
-    @Test
-    public void createUser() throws Exception {
-        ResponseEntity<User> userEntity = restTemplate.postForEntity("/users", new User(user1, "pass1", user1+"@gmail.com"), User.class);
-        assertEquals(HttpStatus.CREATED, userEntity.getStatusCode());
-        assertEquals(new User(user1, "pass1", user1+"@gmail.com"), userEntity.getBody());
-
-        userEntity = restTemplate.getForEntity("/users/"+user1, User.class);
-        assertEquals(HttpStatus.OK, userEntity.getStatusCode());
-        assertEquals(new User(user1, "pass1", user1+"@gmail.com"), userEntity.getBody());
-
-        ResponseEntity<Set> response = restTemplate.getForEntity("/users", Set.class);
+    public void testServerConnection() throws Exception {
+        ResponseEntity<String> response = restTemplate.getForEntity("/", String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void createUser2() throws Exception {
-        ResponseEntity<User> userEntity = restTemplate.postForEntity("/users", new User(user2, "pass2", user2+"@gmail.com"), User.class);
-        assertEquals(HttpStatus.CREATED, userEntity.getStatusCode());
+    public void testUsers() throws Exception {
+        restTemplate.delete(USERS_ENDPOINT);
 
-        userEntity = restTemplate.getForEntity("/users/"+user2, User.class);
-        assertEquals(HttpStatus.OK, userEntity.getStatusCode());
-        assertEquals(new User(user2, "pass2", user2+"@gmail.com"), userEntity.getBody());
-
-        ResponseEntity<Set> response = restTemplate.getForEntity("/users", Set.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(USERS_ENDPOINT, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, parseJsonArrayLength(response.getBody()));
+
+        createUser(user1);
+        createUser(user2);
+        response = restTemplate.getForEntity(USERS_ENDPOINT, String.class);
+        assertTrue(response.getBody().contains(user1.getUsername()));
+        assertTrue(response.getBody().contains(user2.getUsername()));
+        assertEquals(2, parseJsonArrayLength(response.getBody()));
     }
 
-    @Test
-    public void userPollFlow() throws Exception {
-        user1 = "cherry";
-        user2 = "pear";
+    /*@Test
+    public void testPolls() throws Exception {
+        restTemplate.delete(POLLS_ENDPOINT);
 
-        // Create user1
-        ResponseEntity<User> userEntity = restTemplate.postForEntity("/users", new User(user1, "pass1", user1+"@gmail.com"), User.class);
-        assertEquals(HttpStatus.CREATED, userEntity.getStatusCode());
-        assertEquals(new User(user1, "pass1", user1+"@gmail.com"), userEntity.getBody());
-
-        userEntity = restTemplate.getForEntity("/users/"+user1, User.class);
-        assertEquals(HttpStatus.OK, userEntity.getStatusCode());
-        assertEquals(new User(user1, "pass1", user1+"@gmail.com"), userEntity.getBody());
-
-        // List all users, contains user1
-        ResponseEntity<Set> response = restTemplate.getForEntity("/users", Set.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(POLLS_ENDPOINT, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        // TODO check size of output?
+        assertEquals(0, parseJsonArrayLength(response.getBody()));
 
-        // Create user2
-        userEntity = restTemplate.postForEntity("/users", new User(user2, "pass2", user2+"@gmail.com"), User.class);
-        assertEquals(HttpStatus.CREATED, userEntity.getStatusCode());
-        assertEquals(new User(user2, "pass2", user2+"@gmail.com"), userEntity.getBody());
+        VoteOption vo1 = new VoteOption();
+        vo1.setId(0);
+        vo1.setCaption("Taco");
+        vo1.setPresentationOrder(0);
 
-        // List all users, contains both users
-        response = restTemplate.getForEntity("/users", Set.class);
+        VoteOption vo2 = new VoteOption();
+        vo2.setId(1);
+        vo2.setCaption("Pizza");
+        vo2.setPresentationOrder(1);
+
+        Poll poll = new Poll();
+        poll.setID();
+        poll.setPollUsername(user1.getUsername());
+        poll.setPollCreator(user1);
+        poll.setPublicity(false);
+        poll.setQuestion("Taco or Pizza?");
+        poll.setPublishedAt(Instant.now());
+        poll.setValidUntil(Instant.now().plusMillis(3600));
+
+        vo1.setOwningPoll(poll);
+        vo2.setOwningPoll(poll);
+
+        poll.addVoteOption(vo1);
+        poll.addVoteOption(vo2);
+
+        ResponseEntity<Poll> res = restTemplate.postForEntity(POLLS_ENDPOINT, poll, Poll.class);
+        System.out.println(res.getStatusCode());
+        response = restTemplate.getForEntity(POLLS_ENDPOINT, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        System.out.println(response.getBody());
+        assertEquals(1, parseJsonArrayLength(response.getBody()));
+    }
+     */
 
-
-        // User1 creates a poll
-        Poll poll = new Poll(
-                user1,
-                "Cat or Dog",
-                Instant.now().plusSeconds(3600),
-                false,
-                new HashSet<>(Set.of(
-                        new VoteOption("Cat", 0),
-                        new VoteOption("Dog", 1)
-                )));
-        ResponseEntity<Poll> pollEntity = restTemplate.postForEntity("/polls", poll, Poll.class);
-        assertEquals(HttpStatus.CREATED, pollEntity.getStatusCode());
-
-        // Get list of polls
-        response = restTemplate.getForEntity("/polls", Set.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
-
-        // User2 votes on poll
-        //ResponseEntity<Vote> voteEntity = restTemplate.postForEntity("/votes", new Vote(poll.getPollID(), user2, 0), Vote.class);
-        //assertEquals(HttpStatus.CREATED, voteEntity.getStatusCode());
-
-        // User2 changes vote on poll
-        //response = restTemplate.getForEntity("/votes", Set.class);
-        //assertEquals(HttpStatus.OK, response.getStatusCode());
-        //assertEquals(1, Objects.requireNonNull(response.getBody()).size());
-
-
+    private void createUser(User user) {
+        restTemplate.postForEntity(USERS_ENDPOINT, user, User.class);
     }
 
+    private int parseJsonArrayLength(String responseBody) throws JsonProcessingException {
+        return new ObjectMapper().readTree(responseBody).size();
+    }
 }

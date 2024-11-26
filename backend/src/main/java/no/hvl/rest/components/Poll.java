@@ -2,6 +2,8 @@ package no.hvl.rest.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -9,14 +11,23 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Entity
 public class Poll  {
-    @JsonIgnore private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JsonIgnore
+    private UUID id;
     private String username; // username to user who created poll
     private String question;
     private Instant publishedAt;
     private Instant validUntil;
     private boolean isPublic;
-    private Set<VoteOption> voteOptions;
+
+    @ManyToOne
+    @JsonIgnore private User user;
+
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VoteOption> voteOptions = new HashSet<>();
 
     public Poll(
             @JsonProperty("username") String username,
@@ -25,7 +36,6 @@ public class Poll  {
             @JsonProperty("isPublic") boolean isPublic,
             @JsonProperty("voteOptions") Set<VoteOption> voteOptions
     ) {
-        this.id = UUID.randomUUID(); // random unique ID
         this.username = username;
         this.question = question;
         this.publishedAt = Instant.now();
@@ -36,16 +46,30 @@ public class Poll  {
 
     public Poll() {};
 
+    public void setID() {
+        this.id = UUID.randomUUID();
+    }
+
     public UUID getPollID() {
-        return id;
+        if (id != null) {
+            return id;
+        } else {
+            throw new IllegalStateException("Poll ID not set");
+        }
+    }
+
+    public void setPollUsername(String username) {
+        this.username = username;
     }
 
     public String getPollCreator() {
         return username;
     }
 
-    public void setPollCreator(String username) {
-        this.username = username;
+    @NonNull
+    public void setPollCreator(User user) {
+        this.user = user;
+        user.getPolls().add(this);
     }
 
     public String getQuestion() {
@@ -84,9 +108,10 @@ public class Poll  {
         return voteOptions;
     }
 
-    public VoteOption getVoteOption(int index) {
+    // based on id
+    public VoteOption getVoteOption(Long id) {
         for (VoteOption voteOption : voteOptions) {
-            if (voteOption.getPresentationOrder() == index) {
+            if (voteOption.getId().equals(id)) {
                 return voteOption;
             }
         }
@@ -111,8 +136,16 @@ public class Poll  {
     }
 
 
+
     public void setVoteOptions(Set<VoteOption> voteOptions) {
         this.voteOptions = voteOptions;
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Poll[id=%s, username='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
+                id.toString(), username, question, publishedAt.toString(), validUntil.toString(), isPublic);
+
     }
 }
 

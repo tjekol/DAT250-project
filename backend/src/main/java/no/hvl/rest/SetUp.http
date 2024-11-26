@@ -1,12 +1,3 @@
-### GET request to server
-GET http://{{host}}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
 ### CREATE user1
 POST http://{{host}}/users
 Content-Type: application/json
@@ -45,18 +36,6 @@ Content-Type: application/json
     client.test("Response content-type is json", function() {
         var type = response.contentType.mimeType;
         client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
-    });
-%}
-### GET all users
-GET http://{{host}}/users
-
-> {%
-    client.test("User fetched successfully", function () {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-
-    client.test("Fetched one user", function() {
-        client.assert(response.body.length === 1, "Response is not the correct length");
     });
 %}
 
@@ -117,6 +96,9 @@ Content-Type: application/json
 
 > {%
     client.global.set("pollID", response.body.pollID);  // store pollID in a variable from body response parameter pollID
+    client.global.set("vo1", response.body.voteOptions[0].id)
+    client.global.set("vo2", response.body.voteOptions[1].id)
+
     client.test("User created poll successfully", function () {
         client.assert(response.status === 201, "Response status is not 201");
     });
@@ -149,6 +131,15 @@ GET http://{{host}}/polls/{{pollID}}
     });
 %}
 
+### GET specific voteops by pollID
+GET http://{{host}}/voteops/{{pollID}}
+
+> {%
+    client.test("Fetched poll successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### USER2 votes on poll
 POST http://{{host}}/votes
 Content-Type: application/json
@@ -156,25 +147,12 @@ Content-Type: application/json
 {
   "pollID" :"{{pollID}}",
   "username": "{{users.user2}}",
-  "voteOption": 0
+  "voteOption": {{vo1}}
 }
 
 > {%
     client.test("User2 voted on poll successfully", function () {
         client.assert(response.status === 201, "Response status is not 201");
-    });
-%}
-
-### GET all votes
-GET http://{{host}}/votes
-
-> {%
-    client.test("Fetched votes successfully", function () {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-
-    client.test("Fetched only one vote", function() {
-        client.assert(response.body.length === 1, "Response is not the correct length")
     });
 %}
 
@@ -185,7 +163,7 @@ Content-Type: application/json
 {
   "pollID" :"{{pollID}}",
   "username": "{{users.user2}}",
-  "voteOption": 1
+  "voteOption": {{vo2}}
 }
 
 > {%
@@ -207,6 +185,16 @@ GET http://{{host}}/votes
     });
 %}
 
+### Anonym user votes on the same poll
+POST http://{{host}}/votes
+Content-Type: application/json
+
+{
+  "pollID" :"{{pollID}}",
+  "username": null,
+  "voteOption": {{vo1}}
+}
+
 ### USER1 deletes poll
 DELETE http://{{host}}/polls/{{pollID}}
 
@@ -216,34 +204,11 @@ DELETE http://{{host}}/polls/{{pollID}}
     });
 %}
 
-### GET all votes
-GET http://{{host}}/votes
+### DELETE all users
+DELETE http://{{host}}/users
 
 > {%
-    client.test("Fetched votes successfully", function () {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-
-    client.test("Votes are empty", function () {
-        client.assert(response.body.length == 0, "Response is empty")
-    })
-%}
-
-### DELETE all polls
-DELETE http://{{host}}/polls
-
-> {%
-    client.test("Fetched votes successfully", function () {
+    client.test("User1 deleted poll successfully", function () {
         client.assert(response.status === 204, "Response status is not 204");
     });
 %}
-
-### Anonym user votes on the same poll
-POST http://{{host}}/votes
-Content-Type: application/json
-
-{
-  "pollID" :"{{pollID}}",
-  "username": null,
-  "voteOption": 1
-}

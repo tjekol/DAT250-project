@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Set;
 
 @RestController
 //@RequestMapping("/votes")
@@ -24,7 +23,7 @@ public class VoteController {
     };
 
     @GetMapping("/votes")
-    public ResponseEntity<Set<Vote>> getVotes() {
+    public ResponseEntity<Iterable<Vote>> getVotes() {
         return ResponseEntity.ok().body(manager.getVotes());
     }
 
@@ -32,7 +31,8 @@ public class VoteController {
     public ResponseEntity<Vote> castVote(@RequestBody Vote vote) {
         if (manager.castVote(vote)) {
             messageProducer.sendMessage("votes", vote);
-            return ResponseEntity.created(URI.create("/"+vote.getVoter()+"/"+vote.getPollID())).body(vote);
+            return ResponseEntity.created(URI.create("/"+vote.getVoterUsername()+"/"+vote.getPollID())).body(vote);
+
         } else {
             return ResponseEntity.notFound().build();
         }
