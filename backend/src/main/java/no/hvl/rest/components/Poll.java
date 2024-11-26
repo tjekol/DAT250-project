@@ -139,7 +139,7 @@ public class Poll  {
 
     public void setVoteOptions(Set<VoteOption> voteOptions) {
         this.voteOptions = voteOptions;
-
+    }
     @Override
     public String toString() {
         return String.format(
