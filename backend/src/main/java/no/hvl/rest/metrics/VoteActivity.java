@@ -14,7 +14,7 @@ public class VoteActivity {
     private final String pollId;
     private final long timestamp;
 
-    private final Integer voteoption;
+    private final long voteoption;
 
     public VoteActivity(String username, String pollId, long voteoption, long timestamp) {
         this.username = username;
