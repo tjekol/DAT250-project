@@ -16,7 +16,7 @@ public class VoteActivity {
 
     private final Integer voteoption;
 
-    public VoteActivity(String username, String pollId, Integer voteoption, long timestamp) {
+    public VoteActivity(String username, String pollId, long voteoption, long timestamp) {
         this.username = username;
         this.pollId = pollId;
         this.timestamp = timestamp;
@@ -39,7 +39,7 @@ public class VoteActivity {
         return pollId;
     }
 
-    public Integer getVoteOption() {
+    public long getVoteOption() {
         return voteoption;
     }
 
