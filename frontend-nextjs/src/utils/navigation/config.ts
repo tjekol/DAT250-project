@@ -18,6 +18,7 @@ export const PATH = {
   SIGN_IN: "/sign-in",
   SIGN_UP: "/sign-up",
   POLLS: "/polls",
+  POLL: (id: string) => `/${id}` as `/[id]`,
 } as const;
 
 export const localePrefix = "always" satisfies LocalePrefix;
@@ -47,5 +48,9 @@ export const pathnames = {
   "/polls": {
     "en-GB": "/polls",
     "nb-NO": "/avstemninger",
+  },
+  "/[id]": {
+    "en-GB": "/[id]",
+    "nb-NO": "/[id]",
   },
 } satisfies Pathnames<typeof locales>;

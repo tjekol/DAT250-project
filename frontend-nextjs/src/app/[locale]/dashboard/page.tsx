@@ -1,6 +1,5 @@
 import { Slot } from "@/components/slot";
 import { NextPageProps } from "@/interfaces/navigation";
-import { Polls } from "./polls";
 
 export default async function Page(props: NextPageProps) {
   // const users = await getUsers();
@@ -14,9 +13,9 @@ export default async function Page(props: NextPageProps) {
 
   // console.log(users);
   return (
-    <div>
-      <Polls />
-      <div className="flex justify-between">
+    <div className="h-full w-full">
+      {/* <Polls /> */}
+      <div>
         <h1>Header</h1>
         <h1>Header2</h1>
       </div>
