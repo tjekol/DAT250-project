@@ -1,13 +1,22 @@
 package no.hvl.rest.controllers;
-
+import java.time.LocalDateTime;
 import no.hvl.rest.PollManager;
 import no.hvl.rest.components.Poll;
+
+import no.hvl.rest.components.Vote;
+import no.hvl.rest.components.VoteOption;
+import no.hvl.rest.kafka.Producer.MessageProducer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import java.util.UUID;
 
 @RestController
@@ -16,9 +25,12 @@ import java.util.UUID;
 public class PollController {
 
     private final PollManager manager;
+    private final MessageProducer messageProducer;
 
-    public PollController(@Autowired PollManager manager){
+    @Autowired
+    public PollController( PollManager manager,MessageProducer messageProducer) {
         this.manager = manager;
+        this.messageProducer = messageProducer;
     };
 
     @GetMapping("/polls")
@@ -40,6 +52,7 @@ public class PollController {
     public ResponseEntity<Poll> createPoll(@RequestBody Poll poll) {
         if (manager.createPoll(poll, poll.getPollCreator())) {
             String pollID = poll.getPollID().toString();
+            messageProducer.sendMessage("polls", poll);
             return ResponseEntity.created(URI.create("/"+pollID)).body(poll);
         } else {
             return ResponseEntity.notFound().build();

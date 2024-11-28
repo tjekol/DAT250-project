@@ -135,11 +135,17 @@ public class Poll  {
         return Objects.hash(id, username, question, publishedAt, validUntil, isPublic, voteOptions);
     }
 
+
+
+    public void setVoteOptions(Set<VoteOption> voteOptions) {
+        this.voteOptions = voteOptions;
+    }
     @Override
     public String toString() {
         return String.format(
                 "Poll[id=%s, username='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
                 id.toString(), username, question, publishedAt.toString(), validUntil.toString(), isPublic);
+
     }
 }
 

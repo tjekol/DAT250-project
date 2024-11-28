@@ -2,6 +2,7 @@ package no.hvl.rest.controllers;
 
 import no.hvl.rest.PollManager;
 import no.hvl.rest.components.Vote;
+import no.hvl.rest.kafka.Producer.MessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,11 @@ import java.net.URI;
 public class VoteController {
 
     private final PollManager manager;
-
-    public VoteController(@Autowired PollManager manager) {
+    private final MessageProducer messageProducer;
+    @Autowired
+    public VoteController(PollManager manager, MessageProducer messageProducer) {
         this.manager = manager;
+        this.messageProducer = messageProducer;
     };
 
     @GetMapping("/votes")
@@ -27,7 +30,9 @@ public class VoteController {
     @PostMapping("/votes")
     public ResponseEntity<Vote> castVote(@RequestBody Vote vote) {
         if (manager.castVote(vote)) {
+            messageProducer.sendMessage("votes", vote);
             return ResponseEntity.created(URI.create("/"+vote.getVoterUsername()+"/"+vote.getPollID())).body(vote);
+
         } else {
             return ResponseEntity.notFound().build();
         }
