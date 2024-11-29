@@ -22,6 +22,7 @@ public class Vote {
     @JsonIgnore private Instant publishedAt;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     public Vote(
@@ -37,7 +38,7 @@ public class Vote {
 
     public Vote() {}
 
-    @JsonProperty("id")
+    @JsonProperty("voteId")
     public UUID getId() {
         if (id != null) {
             return id;
@@ -51,14 +52,15 @@ public class Vote {
     }
 
     //** username of user who voted **//
-    public String getVoterUsername() {
+    @JsonProperty("username")
+    public String getUsername() {
         if (username == null) {
             return "";
         }
         return username;
     }
 
-    public void setVoterUsername(String voter) {
+    public void setUsername(String voter) {
         this.username = voter;
     }
 
@@ -67,7 +69,6 @@ public class Vote {
         this.user = user;
         user.getVotes().add(this);
     }
-    @JsonProperty("user")
     public User getUser() {
         return user;
     }
@@ -100,7 +101,7 @@ public class Vote {
     @Override
     public String toString() {
         return String.format(
-                "Vote[id=%s, pollID='%s', username='%s', vo='%d', publishedAt='%s', user='%s']",
-                id.toString(), pollID.toString(), username, voteOption, publishedAt.toString(), user.toString());
+                "Vote[id=%s, pollID='%s', username='%s', vo='%d', publishedAt='%s']",
+                id.toString(), pollID.toString(), username, voteOption, publishedAt.toString());
     }
 }
