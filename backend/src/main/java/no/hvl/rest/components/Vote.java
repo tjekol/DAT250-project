@@ -1,5 +1,7 @@
 package no.hvl.rest.components;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -13,14 +15,14 @@ import java.util.UUID;
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore private UUID id;
+    private UUID id;
     private UUID pollID;
     private String username; // user who cast a vote
     private long voteOption;
     @JsonIgnore private Instant publishedAt;
 
     @ManyToOne
-    @JsonIgnore private User user;
+    private User user;
 
     public Vote(
             @JsonProperty("pollID") UUID pollID,
@@ -35,6 +37,7 @@ public class Vote {
 
     public Vote() {}
 
+    @JsonProperty("id")
     public UUID getId() {
         if (id != null) {
             return id;
@@ -64,7 +67,7 @@ public class Vote {
         this.user = user;
         user.getVotes().add(this);
     }
-
+    @JsonProperty("user")
     public User getUser() {
         return user;
     }

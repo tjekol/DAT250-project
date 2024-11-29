@@ -35,8 +35,6 @@ public class MessageConsumer {
     public void consumePoll(Poll poll) {
         try {
             // Process poll object
-            LocalDateTime now = LocalDateTime.now();
-            System.out.println("Received Poll: " + poll.toString() + " at " + now);
 
             // Update ApplicationMetrics
             AppMetrics appMetrics = applicationMetricsRepository.findById("app_metrics")
@@ -47,7 +45,7 @@ public class MessageConsumer {
             applicationMetricsRepository.save(appMetrics);
 
             // Log poll creation activity
-            PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(),poll.getVoteOptions(), System.currentTimeMillis());
+            PollActivity activity = new PollActivity(poll.getPollCreator(),  poll.getPollID().toString(), poll.getQuestion() ,poll.getVoteOptions(), System.currentTimeMillis());
             pollActivityRepo.save(activity);
         } catch (Exception e) {
             System.err.println("Error consuming poll: " + e.getMessage());
@@ -59,7 +57,7 @@ public class MessageConsumer {
     public void consumeVote(Vote vote) {
         try {
             // Process vote object
-            System.out.println("Received Vote: " + vote.toString());
+            System.out.println("Received Vote: " + vote.getId());
 
             // Update vote count
             pollVoteCount.merge(vote.getPollID(), 1, Integer::sum);
