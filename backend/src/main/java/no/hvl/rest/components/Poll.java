@@ -66,12 +66,14 @@ public class Poll  {
             throw new IllegalStateException("Poll ID not set");
         }
     }
+
     @JsonProperty("username")
     public void setUsername(String username) {
         this.username = username;
     }
 
     @JsonProperty("username")
+
     public String getUsername() {
         return username;
     }
