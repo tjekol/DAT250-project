@@ -50,7 +50,7 @@ public class PollController {
 
     @PostMapping("/polls")
     public ResponseEntity<Poll> createPoll(@RequestBody Poll poll) {
-        if (manager.createPoll(poll, poll.getPollCreator())) {
+        if (manager.createPoll(poll, poll.getUsername())) {
             String pollID = poll.getPollID().toString();
             messageProducer.sendMessage("polls", poll);
             return ResponseEntity.created(URI.create("/"+pollID)).body(poll);

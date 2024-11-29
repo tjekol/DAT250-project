@@ -48,14 +48,14 @@ public class Vote {
     }
 
     //** username of user who voted **//
-    public String getVoterUsername() {
+    public String getUsername() {
         if (username == null) {
             return "";
         }
         return username;
     }
 
-    public void setVoterUsername(String voter) {
+    public void setUsername(String voter) {
         this.username = voter;
     }
 
