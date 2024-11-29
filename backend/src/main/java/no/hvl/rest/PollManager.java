@@ -153,9 +153,7 @@ public class PollManager {
                 vote.setUser(userRepository.findByUsername(vote.getUsername()));
                 voteRepository.save(vote);
             }
-            System.out.println(vote.getVoteOption());
             VoteOption vo = poll.getVoteOption(vote.getVoteOption());
-            System.out.println(vo);
             vo.addVote();
             voteOptionRepository.save(vo);
         }
