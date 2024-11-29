@@ -46,16 +46,19 @@ public class Poll  {
 
     public Poll() {};
 
+    @JsonProperty("pollID")
+    public UUID getId() {
+        return id;
+    }
 
-
-
-    @JsonProperty("PollID")
+    @JsonProperty("pollID")
+    public void setId(UUID id) {
+        this.id = id;
+    }
     public void setID() {
         this.id = UUID.randomUUID();
     }
 
-
-    @JsonProperty("PollID")
     public UUID getPollID() {
         if (id != null) {
             return id;
@@ -63,12 +66,12 @@ public class Poll  {
             throw new IllegalStateException("Poll ID not set");
         }
     }
-    @JsonProperty("pollCreator")
+    @JsonProperty("username")
     public void setUsername(String username) {
         this.username = username;
     }
 
-    @JsonProperty("pollCreator")
+    @JsonProperty("username")
     public String getUsername() {
         return username;
     }
