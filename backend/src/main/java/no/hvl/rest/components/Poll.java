@@ -58,16 +58,16 @@ public class Poll  {
         }
     }
 
-    public void setPollUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPollCreator() {
+    public String getUsername() {
         return username;
     }
 
     @NonNull
-    public void setPollCreator(User user) {
+    public void setPollUser(User user) {
         this.user = user;
         user.getPolls().add(this);
     }

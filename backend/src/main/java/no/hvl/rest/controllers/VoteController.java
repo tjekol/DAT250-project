@@ -31,7 +31,7 @@ public class VoteController {
     public ResponseEntity<Vote> castVote(@RequestBody Vote vote) {
         if (manager.castVote(vote)) {
             messageProducer.sendMessage("votes", vote);
-            return ResponseEntity.created(URI.create("/"+vote.getVoterUsername()+"/"+vote.getPollID())).body(vote);
+            return ResponseEntity.created(URI.create("/"+vote.getUsername()+"/"+vote.getPollID())).body(vote);
 
         } else {
             return ResponseEntity.notFound().build();

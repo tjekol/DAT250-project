@@ -88,7 +88,7 @@ public class PollManager {
 
         if (userExists(creator.getUsername())) {
             pollRepository.save(poll);
-            poll.setPollCreator(creator);
+            poll.setPollUser(creator);
             for (VoteOption vo : poll.getVoteOptions()) {
                 vo.setOwningPoll(poll);
                 voteOptionRepository.save(vo);
@@ -139,10 +139,10 @@ public class PollManager {
         Poll poll = getPollByID(votePollID);
 
         if (poll.isPublic()) {
-            String voter = vote.getVoterUsername();
+            String voter = vote.getUsername();
             if (voter.equals("")) { // no voter then anonymous voter
                 voter = UUID.randomUUID().toString();
-                vote.setVoterUsername(voter);
+                vote.setUsername(voter);
             }
             voteRepository.save(vote);
             VoteOption vo = poll.getVoteOption(vote.getVoteOption());
@@ -150,7 +150,7 @@ public class PollManager {
             voteOptionRepository.save(vo);
         } else { // private
             if (!userHasVoted(vote, poll)) {
-                vote.setUser(userRepository.findByUsername(vote.getVoterUsername()));
+                vote.setUser(userRepository.findByUsername(vote.getUsername()));
                 voteRepository.save(vote);
             }
             VoteOption vo = poll.getVoteOption(vote.getVoteOption());
@@ -162,7 +162,7 @@ public class PollManager {
 
     // the user has already voted, remove the old vote
     private boolean userHasVoted(Vote vote, Poll poll) {
-        List<Vote> userVote = voteRepository.findByPollIDAndUsername(vote.getPollID(), vote.getVoterUsername());
+        List<Vote> userVote = voteRepository.findByPollIDAndUsername(vote.getPollID(), vote.getUsername());
 
         if (!userVote.isEmpty()) {
             for (Vote v : userVote) {
