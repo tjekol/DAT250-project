@@ -58,16 +58,16 @@ public class Poll  {
         }
     }
 
-    public void setPollUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPollCreator() {
+    public String getUsername() {
         return username;
     }
 
     @NonNull
-    public void setPollCreator(User user) {
+    public void setPollUser(User user) {
         this.user = user;
         user.getPolls().add(this);
     }
@@ -135,11 +135,17 @@ public class Poll  {
         return Objects.hash(id, username, question, publishedAt, validUntil, isPublic, voteOptions);
     }
 
+
+
+    public void setVoteOptions(Set<VoteOption> voteOptions) {
+        this.voteOptions = voteOptions;
+    }
     @Override
     public String toString() {
         return String.format(
                 "Poll[id=%s, username='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
                 id.toString(), username, question, publishedAt.toString(), validUntil.toString(), isPublic);
+
     }
 }
 

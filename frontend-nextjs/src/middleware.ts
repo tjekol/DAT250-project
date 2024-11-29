@@ -30,6 +30,7 @@ function redirectToDefaultLocale(req: NextRequest) {
 }
 
 export default clerkMiddleware(async (auth, req) => {
+  console.log("middleware", req.nextUrl.pathname);
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
