@@ -52,6 +52,7 @@ public class Vote {
     }
 
     //** username of user who voted **//
+
     @JsonProperty("username")
     public String getUsername() {
         if (username == null) {

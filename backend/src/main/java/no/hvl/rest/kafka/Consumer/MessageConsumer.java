@@ -45,7 +45,8 @@ public class MessageConsumer {
             applicationMetricsRepository.save(appMetrics);
 
             // Log poll creation activity
-            PollActivity activity = new PollActivity(poll.getUsername(),  poll.getPollID().toString(), poll.getQuestion() ,poll.getVoteOptions(), System.currentTimeMillis());
+
+            PollActivity activity = new PollActivity(poll.getUsername(), poll.getPollID().toString(), poll.getQuestion() ,poll.getVoteOptions(), System.currentTimeMillis());
             pollActivityRepo.save(activity);
         } catch (Exception e) {
             System.err.println("Error consuming poll: " + e.getMessage());
