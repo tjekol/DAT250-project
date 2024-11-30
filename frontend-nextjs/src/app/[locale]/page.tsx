@@ -16,7 +16,7 @@ export default async function Page(props: NextPageProps) {
   const GRADIENT = (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 -top-40 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      className="pointer-events-none absolute inset-x-0 -top-40 z-[-1] transform-gpu overflow-hidden blur-3xl sm:-top-80"
     >
       <div
         style={{

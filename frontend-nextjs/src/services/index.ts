@@ -54,11 +54,15 @@ export async function castVote(
   voteOption: string,
   username: string,
 ) {
+  const token = await getToken();
   try {
     const response = await api.post<any>(`/votes`, {
       pollID,
       username,
       voteOption,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
