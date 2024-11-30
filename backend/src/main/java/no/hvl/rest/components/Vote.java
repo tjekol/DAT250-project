@@ -1,5 +1,7 @@
 package no.hvl.rest.components;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -13,14 +15,15 @@ import java.util.UUID;
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore private UUID id;
+    private UUID id;
     private UUID pollID;
     private String username; // user who cast a vote
     private long voteOption;
     @JsonIgnore private Instant publishedAt;
 
     @ManyToOne
-    @JsonIgnore private User user;
+    @JsonIgnore
+    private User user;
 
     public Vote(
             @JsonProperty("pollID") UUID pollID,
@@ -35,6 +38,7 @@ public class Vote {
 
     public Vote() {}
 
+    @JsonProperty("voteId")
     public UUID getId() {
         if (id != null) {
             return id;
@@ -48,6 +52,8 @@ public class Vote {
     }
 
     //** username of user who voted **//
+
+    @JsonProperty("username")
     public String getUsername() {
         if (username == null) {
             return "";
@@ -64,7 +70,6 @@ public class Vote {
         this.user = user;
         user.getVotes().add(this);
     }
-
     public User getUser() {
         return user;
     }
@@ -97,7 +102,7 @@ public class Vote {
     @Override
     public String toString() {
         return String.format(
-                "Vote[id=%s, pollID='%s', username='%s', vo='%d', publishedAt='%s', user='%s']",
-                id.toString(), pollID.toString(), username, voteOption, publishedAt.toString(), user.toString());
+                "Vote[id=%s, pollID='%s', username='%s', vo='%d', publishedAt='%s']",
+                id.toString(), pollID.toString(), username, voteOption, publishedAt.toString());
     }
 }

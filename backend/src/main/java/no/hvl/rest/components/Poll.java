@@ -15,7 +15,6 @@ import java.util.UUID;
 public class Poll  {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
     private String username; // username to user who created poll
     private String question;
@@ -24,7 +23,8 @@ public class Poll  {
     private boolean isPublic;
 
     @ManyToOne
-    @JsonIgnore private User user;
+    @JsonIgnore
+    private User user;
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VoteOption> voteOptions = new HashSet<>();
@@ -46,6 +46,15 @@ public class Poll  {
 
     public Poll() {};
 
+    @JsonProperty("pollID")
+    public UUID getId() {
+        return id;
+    }
+
+    @JsonProperty("pollID")
+    public void setId(UUID id) {
+        this.id = id;
+    }
     public void setID() {
         this.id = UUID.randomUUID();
     }
@@ -58,9 +67,12 @@ public class Poll  {
         }
     }
 
+    @JsonProperty("username")
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @JsonProperty("username")
 
     public String getUsername() {
         return username;
@@ -110,7 +122,9 @@ public class Poll  {
 
     // based on id
     public VoteOption getVoteOption(Long id) {
+
         for (VoteOption voteOption : voteOptions) {
+
             if (voteOption.getId().equals(id)) {
                 return voteOption;
             }
@@ -143,9 +157,14 @@ public class Poll  {
     @Override
     public String toString() {
         return String.format(
-                "Poll[id=%s, username='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
-                id.toString(), username, question, publishedAt.toString(), validUntil.toString(), isPublic);
-
+                "Poll[id=%s, pollCreator='%s', question='%s', publishedAt='%s', validUntil='%s', isPublic='%s']",
+                (id != null ? id.toString() : "null"),
+                username,
+                question,
+                (publishedAt != null ? publishedAt.toString() : "null"),
+                (validUntil != null ? validUntil.toString() : "null"),
+                isPublic
+        );
     }
 }
 
