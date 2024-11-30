@@ -40,7 +40,7 @@ export default function Options() {
                 name={`options.${index}.option` as const}
                 placeholder="Some color..."
               />
-              {fields.length > 1 && (
+              {fields.length > 2 && (
                 <div className="space-y-4">
                   <Button
                     type="button"
