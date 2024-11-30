@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import "server-only";
 import { CreatePoll, Poll } from "../interfaces";
 import { api } from "./api";
@@ -11,9 +11,14 @@ export async function getToken() {
 
 export async function createPoll(body: CreatePoll) {
   const token = await getToken();
-  const userId = "123"; // TODO: temporary solution, should use token
+  const user = await currentUser();
+  const username = user?.username;
+  if (!username) {
+    throw new Error("User not found ");
+  }
   try {
     const response = await api.post<Poll>("/polls", {
+      username,
       ...body,
       headers: {
         Authorization: `Bearer ${token}`,

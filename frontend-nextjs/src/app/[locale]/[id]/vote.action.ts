@@ -3,7 +3,7 @@ import { castVote } from "@/services";
 import { actionClient } from "@/utils/action-client";
 import { voteActionSchema } from "./vote.schema";
 
-export const voteOnPoll = actionClient
+export const voteOnPollAction = actionClient
   .schema(voteActionSchema)
   .action(async ({ parsedInput }) => {
     const result = await castVote(

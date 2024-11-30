@@ -1,4 +1,5 @@
 "use server";
+import CreatePoll from "@/components/create-poll/create-poll-form";
 import { Poll } from "@/components/poll";
 import { Button } from "@/components/ui/button";
 import { NextPageProps } from "@/interfaces/navigation";
@@ -6,6 +7,7 @@ import { getPolls } from "@/services";
 import { Link } from "@/utils/navigation";
 import { PATH } from "@/utils/navigation/config";
 import { currentUser } from "@clerk/nextjs/server";
+import { ArrowRight } from "lucide-react";
 
 import { getTranslations } from "next-intl/server";
 export default async function Page(props: NextPageProps) {
@@ -54,9 +56,23 @@ export default async function Page(props: NextPageProps) {
     <div className="h-full space-y-10">
       {GRADIENT}
       <div>Hi {user.username}</div>
+      <div className="flex flex-col gap-20">
+        <div className="grid grid-cols-2">
+          <div className="flex items-center justify-center">
+            <div className="flex flex-row items-center gap-10">
+              <h1 className="text-6xl">Create a poll</h1>
+              <ArrowRight size={40} />
+            </div>
+          </div>
+          <CreatePoll />
+        </div>
 
-      <div className="grid grid-flow-row grid-cols-3 gap-10">
-        {polls?.map((poll, index) => <Poll key={index} poll={poll} />)}
+        <div className="flex flex-col gap-10">
+          <h2 className="text-4xl">Browse polls and vote 🚀</h2>
+          <div className="grid grid-flow-row grid-cols-3 gap-10">
+            {polls?.map((poll, index) => <Poll key={index} poll={poll} />)}
+          </div>
+        </div>
       </div>
     </div>
   );
