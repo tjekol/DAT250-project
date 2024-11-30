@@ -10,9 +10,7 @@ export async function getToken() {
 }
 
 export async function createPoll(body: CreatePoll) {
-  console.log("createPoll");
   const token = await getToken();
-  console.log("token", token);
   const userId = "123"; // TODO: temporary solution, should use token
   try {
     const response = await api.post<Poll>("/polls", {

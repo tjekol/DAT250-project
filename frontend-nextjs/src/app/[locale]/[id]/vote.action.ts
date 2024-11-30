@@ -11,5 +11,4 @@ export const voteOnPoll = actionClient
       parsedInput.voteOption,
       parsedInput.username,
     );
-    console.log("result", result);
   });

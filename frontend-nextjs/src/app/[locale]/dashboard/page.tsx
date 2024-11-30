@@ -2,16 +2,6 @@ import { Slot } from "@/components/slot";
 import { NextPageProps } from "@/interfaces/navigation";
 
 export default async function Page(props: NextPageProps) {
-  // const users = await getUsers();
-  // console.log(users);
-  // const queryClient = new QueryClient();
-
-  // const users = await queryClient.prefetchQuery({
-  //   queryKey: ["users"],
-  //   queryFn: getUsers,
-  // });
-
-  // console.log(users);
   return (
     <div className="h-full w-full">
       {/* <Polls /> */}

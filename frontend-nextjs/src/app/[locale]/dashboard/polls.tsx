@@ -8,8 +8,6 @@ export function Polls() {
     queryKey: ["polls"],
     queryFn: getPolls,
   });
-  console.log("isFetching", isFetching);
-  console.log("polls", polls);
   return (
     <div>
       {/* {polls?.map((poll) => <Poll key={poll.id} {...poll} />)} */}
