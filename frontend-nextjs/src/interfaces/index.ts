@@ -20,7 +20,6 @@ const voteOptions: VoteOption[] = [
 ];
 
 export interface CreatePoll {
-  username: string;
   question: string;
   validUntil: string;
   isPublic: boolean;

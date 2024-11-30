@@ -8,7 +8,7 @@ import { VoteOption } from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
-import { voteOnPoll } from "./vote.action";
+import { voteOnPollAction } from "./vote.action";
 import { voteSchema } from "./vote.schema";
 
 export default function VoteForm({
@@ -27,7 +27,7 @@ export default function VoteForm({
     },
   });
 
-  const { execute, isExecuting } = useAction(voteOnPoll);
+  const { execute, isExecuting } = useAction(voteOnPollAction);
   return (
     <Form {...form}>
       <form
@@ -43,7 +43,9 @@ export default function VoteForm({
           </p>
         )}
         <CardFooter className="flex justify-between">
-          <Button type="submit">Vote</Button>
+          <Button type="submit" isLoading={isExecuting}>
+            Vote
+          </Button>
         </CardFooter>
       </form>
     </Form>
