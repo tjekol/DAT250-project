@@ -43,3 +43,10 @@ const getPoll: Poll = {
     { id: 2, votes: 10, caption: "Option 2", presentationOrder: 2 },
   ],
 };
+
+export interface User {
+  username: string;
+  email: string;
+  password: string;
+  id: string;
+}

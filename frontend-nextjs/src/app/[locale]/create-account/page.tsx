@@ -1,14 +1,11 @@
-// TODO: Remove this file
+import { NextPageProps } from "@/interfaces/navigation";
+import { createUser } from "@/services";
+import { redirect } from "next/navigation";
 
-// import { NextPageProps } from "@/interfaces/navigation";
-// import { CreateAccountForm } from "./create-account.form";
-
-// export default async function Page(props: NextPageProps) {
-//   const params = await props.params;
-
-//   return (
-//     <>
-//       <CreateAccountForm />
-//     </>
-//   );
-// }
+export default async function Page(props: NextPageProps) {
+  const result = await createUser();
+  if (result) {
+    redirect("/dashboard");
+  }
+  redirect("/");
+}
