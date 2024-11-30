@@ -1,14 +1,17 @@
 "use client";
 
-import { getUsers } from "@/services";
+import { getPolls } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
 export function Polls() {
-  const { data: userData, isFetching } = useQuery({
-    queryKey: ["users"],
-    queryFn: getUsers,
+  const { data: polls, isFetching } = useQuery({
+    queryKey: ["polls"],
+    queryFn: getPolls,
   });
-  console.log("isFetching", isFetching);
-  console.log("users", userData?.[0]?.username);
-  return <div>polls {userData?.[0]?.username}</div>;
+  return (
+    <div>
+      {/* {polls?.map((poll) => <Poll key={poll.id} {...poll} />)} */}
+      Test
+    </div>
+  );
 }

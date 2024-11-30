@@ -41,13 +41,14 @@ export default async function RootLayout(props: {
           <NextIntlClientProvider locale={locale} messages={messages}>
             <ReactQueryClientProvider>
               <div className="flex min-h-screen w-full flex-col">
-                <div className="sm:min-w-lg mx-auto flex w-full max-w-7xl items-center p-4">
-                  <div className="flex w-full flex-col gap-10">
+                <Navbar locale={locale} />
+                <div className="sm:min-w-lg mx-auto flex w-full max-w-7xl">
+                  <div className="mx-0 flex min-h-[calc(100vh)] w-full p-10">
                     {/* <Providers> TODO: Enable theme switch. MUST FIX HYDRATION MISMATCH */}
-                    <Navbar locale={locale} />
+
                     {children}
-                    {/* </Providers> */}
                   </div>
+                  {/* </Providers> */}
                 </div>
               </div>
               <Footer />

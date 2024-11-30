@@ -10,5 +10,12 @@
   "HomePage": {
     "title": "Poll App",
     "submit": "Get Started"
+  },
+  "PollPage": {
+    "title": "Poll",
+    "creator": "Creator",
+    "validUntil": "Valid until",
+    "vote": "Vote",
+    "votes": "Votes"
   }
 }

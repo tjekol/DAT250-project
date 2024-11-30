@@ -1,12 +1,14 @@
-import { NextPageProps } from "@/interfaces/navigation";
-import { CreateAccountForm } from "./create-account.form";
+// TODO: Remove this file
 
-export default async function Page(props: NextPageProps) {
-  const params = await props.params;
+// import { NextPageProps } from "@/interfaces/navigation";
+// import { CreateAccountForm } from "./create-account.form";
 
-  return (
-    <>
-      <CreateAccountForm />
-    </>
-  );
-}
+// export default async function Page(props: NextPageProps) {
+//   const params = await props.params;
+
+//   return (
+//     <>
+//       <CreateAccountForm />
+//     </>
+//   );
+// }

@@ -1,12 +1,14 @@
-import { NextPageProps } from "@/interfaces/navigation";
-import { LoginForm } from "./login.form";
+// TODO: Remove this file
 
-export default async function Page(props: NextPageProps) {
-  const params = await props.params;
+// import { NextPageProps } from "@/interfaces/navigation";
+// import { LoginForm } from "./login.form";
 
-  return (
-    <>
-      <LoginForm />
-    </>
-  );
-}
+// export default async function Page(props: NextPageProps) {
+//   const params = await props.params;
+
+//   return (
+//     <>
+//       <LoginForm />
+//     </>
+//   );
+// }
