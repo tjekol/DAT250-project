@@ -75,19 +75,19 @@ export async function castVote(
 export async function createUser() {
   const user = await currentUser();
   const username = user?.username;
-  const email = user?.emailAddresses[0].emailAddress;
+  const email = user?.emailAddresses?.[0]?.emailAddress || "dummy@email.com";
   if (!username) {
     return null;
   }
   try {
     const response = await api.post<User>("/users", {
       username,
-      email: email || "dummy@email.com",
+      email,
       password: "password",
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to create poll:", error);
+    console.error("Failed to create user:", error);
     throw error;
   }
 }
