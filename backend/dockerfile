@@ -1,22 +1,20 @@
 # Backend Dockerfile
 
 # Stage 1: Build the application
-FROM gradle:8.10.2-jdk21 AS build
+FROM gradle:8.11.0-alpine AS build
 WORKDIR /app
 
 # Copy Gradle Wrapper and build files
 
 
 COPY build.gradle.kts /app/
-COPY gradlew /app/
-COPY gradle /app/gradle
-COPY data /app/data
+
 COPY src /app/src
 
 
 # Make Gradle Wrapper executable and build the application
 
-RUN ./gradlew bootJar --no-daemon
+RUN gradle bootJar
 
 # Stage 2: Run the application
 FROM openjdk:21-jdk-slim AS runtime
@@ -25,5 +23,6 @@ WORKDIR /app
 # Copy the built JAR from the build stage
 COPY --from=build /app/build/libs/*.jar /app/myapp.jar
 
+EXPOSE 8080
 # Run the application
 CMD ["java", "-jar", "/app/myapp.jar"]
