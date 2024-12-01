@@ -1,14 +1,21 @@
 {
   "Navbar": {
-    "title": "Poll App",
+    "title": "Avstemningsapp",
     "signIn": "Logg inn",
-    "getStarted": "Kom i Gang",
+    "getStarted": "Kom i gang",
     "signOut": "Logg ut",
-    "dashboard": "Dashboard",
-    "polls": "Spørreundersøkelser"
+    "dashboard": "Dashbord",
+    "polls": "Avstemninger"
   },
   "HomePage": {
-    "title": "Poll App",
+    "title": "Avstemningsapp",
     "submit": "Kom i gang"
+  },
+  "PollPage": {
+    "title": "Avstemning",
+    "creator": "Skaper",
+    "validUntil": "Gyldig til",
+    "vote": "Stem",
+    "votes": "Stemmer"
   }
 }
