@@ -1,7 +1,7 @@
 import Footer from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Params } from "@/interfaces/navigation";
-import { LOCALE } from "@/utils/navigation/config";
+import { LOCALE, PATH } from "@/utils/navigation/config";
 import { nbNO } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient } from "@tanstack/react-query";
@@ -36,7 +36,11 @@ export default async function RootLayout(props: {
       break;
   }
   return (
-    <ClerkProvider localization={clerkLocale}>
+    <ClerkProvider
+      localization={clerkLocale}
+      signUpFallbackRedirectUrl={`${locale}/${PATH.CREATE_ACCOUNT}`}
+      signInFallbackRedirectUrl={`${locale}/${PATH.DASHBOARD}`}
+    >
       <html lang={locale}>
         <body className={inter.className}>
           <NextIntlClientProvider locale={locale} messages={messages}>
