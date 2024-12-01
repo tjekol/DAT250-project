@@ -3,7 +3,7 @@ backend/.gradle
 frontend/.gradle
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
+!backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 package-lock.json
