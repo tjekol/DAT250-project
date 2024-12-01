@@ -94,18 +94,25 @@ services:
       - controller-1
       - controller-2
       - controller-3
-  #app:
-    #build:
-      #context: .
-      #dockerfile: dockerfile
-    #container_name: my-spring-boot-app
-    #volumes:
-      #- .:/app
-      #- ~/.gradle:/home/gradle/.gradle
-    #ports:
-     # - "8080:8080"
-    #ommand: ./gradlew bootRun
-    #depends_on:
-     # - broker-1
-     # - broker-2
-      #- broker-3
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - controller-1
+      - controller-2
+      - controller-3
+      - broker-1
+      - broker-2
+      - broker-3
+
+  frontend:
+    build:
+      context: ./frontend-nextjs
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
