@@ -8,7 +8,7 @@ import { FieldInput } from "../form/input";
 export default function Options() {
   useFormContext();
   const { fields, append, remove, move } = useFieldArray({
-    name: "options",
+    name: "voteOptions",
   });
 
   const defaultValues = { option: "" };
@@ -37,7 +37,7 @@ export default function Options() {
                 </Button>
               )}
               <FieldInput
-                name={`options.${index}.option` as const}
+                name={`voteOptions.${index}.option` as const}
                 placeholder="Some color..."
               />
               {fields.length > 2 && (

@@ -5,15 +5,15 @@ const optionSchema = z.object({
 });
 export const createPollSchema = z.object({
   question: z.string().min(3),
-  options: z.array(optionSchema).min(1),
+  voteOptions: z.array(optionSchema).min(1),
   isPublic: z.boolean(),
   validUntil: z.date(),
 });
 
-const optionsDefaultValues = [{ option: "" }, { option: "" }];
+const voteOptionsDefaultValues = [{ option: "" }, { option: "" }];
 export const createPollDefaultValues = {
   question: "",
-  options: optionsDefaultValues,
+  voteOptions: voteOptionsDefaultValues,
   isPublic: false,
   validUntil: new Date(),
 };

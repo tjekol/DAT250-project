@@ -23,8 +23,14 @@ export function RadioGroupSelect({ name, options }: RadioGroupSelectProps) {
                 const idToString = option.id.toString();
                 return (
                   <div key={option.id} className="flex items-center space-x-2">
-                    <RadioGroupItem value={idToString} id={idToString} />
-                    <Label htmlFor={idToString}>{option.caption}</Label>
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem value={idToString} id={idToString} />
+                      <Label htmlFor={idToString}>{option.caption}</Label>
+                    </div>
+                    <div>:{option.votes}</div>
                   </div>
                 );
               })}

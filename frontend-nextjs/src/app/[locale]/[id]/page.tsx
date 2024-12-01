@@ -6,27 +6,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { NextPageProps } from "@/interfaces/navigation";
-import { getPoll } from "@/services";
+import { getPoll } from "@/services/api-open";
 import { getTranslations } from "next-intl/server";
 import VoteForm from "./vote.form";
 export default async function Page(props: NextPageProps) {
   const params = await props.params;
   const t = await getTranslations("PollPage");
   const poll = await getPoll(params.id!);
-  // const testQuestion = "What's your favorite programming language?";
-  // const testOptions = [
-  //   { caption: "Option 1", presentationOrder: 1 },
-  //   { caption: "Option 2", presentationOrder: 2 },
-  // ];
-  // await createPoll({
-  //   question: testQuestion,
-  //   voteOptions: testOptions,
-  //   validUntil: new Date().toISOString(),
-  //   isPublic: true,
-  //   username: "seb",
-  // });
-  const { question, username, validUntil, isPublic, voteOptions, pollID } =
-    poll;
+  const {
+    question,
+    username,
+    validUntil,
+    public: isPublic,
+    voteOptions,
+    pollID,
+  } = poll;
   const date = new Date(validUntil).toLocaleDateString();
   return (
     <Card className="h-fit">
@@ -38,13 +32,14 @@ export default async function Page(props: NextPageProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          t{"validUntil"} {date}
+          {t("validUntil")} {date}
         </div>
         <div>
           <VoteForm
             voteOptions={voteOptions}
             pollID={pollID}
             username={username}
+            public={isPublic}
           />
         </div>
       </CardContent>

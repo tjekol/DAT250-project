@@ -9,6 +9,6 @@ export const voteOnPollAction = actionClient
     const result = await castVote(
       parsedInput.pollID,
       parsedInput.voteOption,
-      parsedInput.username,
+      parsedInput.isPublic,
     );
   });
