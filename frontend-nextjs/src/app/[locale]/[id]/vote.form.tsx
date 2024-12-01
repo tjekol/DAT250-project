@@ -15,10 +15,12 @@ export default function VoteForm({
   voteOptions,
   pollID,
   username,
+  public: isPublic,
 }: {
   voteOptions: VoteOption[];
   pollID: string;
   username: string;
+  public: boolean;
 }) {
   const form = useForm({
     resolver: zodResolver(voteSchema),
@@ -28,15 +30,19 @@ export default function VoteForm({
   });
 
   const { execute, isExecuting } = useAction(voteOnPollAction);
+
+  const sortedVoteOptions = voteOptions.sort(
+    (a, b) => a.presentationOrder - b.presentationOrder,
+  );
   return (
     <Form {...form}>
       <form
         className="space-y-4"
         onSubmit={form.handleSubmit(async (data) => {
-          execute({ ...data, pollID, username });
+          execute({ ...data, pollID, username, isPublic });
         })}
       >
-        <RadioGroupSelect name="voteOption" options={voteOptions} />
+        <RadioGroupSelect name="voteOption" options={sortedVoteOptions} />
         {form.formState.errors.voteOption && (
           <p className="text-red-600">
             {form.formState.errors?.voteOption?.message?.toString()}

@@ -22,7 +22,7 @@ const voteOptions: VoteOption[] = [
 export interface CreatePoll {
   question: string;
   validUntil: string;
-  isPublic: boolean;
+  public: boolean;
   voteOptions: CreateVoteOption[];
 }
 export interface Poll extends CreatePoll {
@@ -37,7 +37,7 @@ const getPoll: Poll = {
   username: "creatorUsername",
   question: "What's your favorite programming language?",
   validUntil: "2023-12-31T23:59:59Z",
-  isPublic: true,
+  public: true,
   voteOptions: [
     { id: 1, votes: 0, caption: "Option 1", presentationOrder: 1 },
     { id: 2, votes: 10, caption: "Option 2", presentationOrder: 2 },

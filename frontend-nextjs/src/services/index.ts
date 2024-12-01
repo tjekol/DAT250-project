@@ -31,33 +31,30 @@ export async function createPoll(body: CreatePoll) {
   }
 }
 
-export async function getPolls() {
-  try {
-    const response = await api.get<Poll[]>("/polls").then((res) => res.data);
-    return response;
-  } catch (error) {
-    console.error("Failed to get polls:", error);
-    throw error;
-  }
-}
-export async function getPoll(id: string) {
-  try {
-    const response = await api
-      .get<Poll>(`/polls/${id}`)
-      .then((res) => res.data);
-    return response;
-  } catch (error) {
-    console.error("Failed to get poll:", error);
-    throw error;
-  }
-}
-
 export async function castVote(
   pollID: string,
   voteOption: string,
-  username: string,
+  isPublic: boolean,
 ) {
+  if (isPublic) {
+    try {
+      const response = await api.post<any>(`/votes`, {
+        pollID,
+        voteOption,
+        username: null,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to cast vote:", error);
+      throw error;
+    }
+  }
   const token = await getToken();
+  const user = await currentUser();
+  const username = user?.username;
+  if (!username) {
+    throw new Error("User not found ");
+  }
   try {
     const response = await api.post<any>(`/votes`, {
       pollID,

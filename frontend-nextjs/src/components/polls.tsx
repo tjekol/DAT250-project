@@ -1,6 +1,6 @@
 "use client";
 
-import { getPolls } from "@/services";
+import { getPolls } from "@/services/api-open";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "./poll";
 

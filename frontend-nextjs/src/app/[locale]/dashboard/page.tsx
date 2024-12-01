@@ -1,26 +1,27 @@
-import { Slot } from "@/components/slot";
+import { Poll } from "@/components/poll";
 import { NextPageProps } from "@/interfaces/navigation";
+import { getPolls } from "@/services/api-open";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Page(props: NextPageProps) {
+  const user = await currentUser();
+  const username = user?.username;
+  const polls = await getPolls();
+
+  const userPolls = polls.filter((poll) => poll.username === username);
   return (
-    <div className="h-full w-full">
-      {/* <Polls /> */}
-      <div>
-        <h1>Header</h1>
-        <h1>Header2</h1>
+    <div className="space-y-10">
+      <div>Hi {user?.username}</div>
+      <div className="flex flex-col gap-20">
+        <div className="grid grid-cols-2"></div>
+
+        <div className="flex flex-col gap-10">
+          <h2 className="text-4xl">Your polls 🚀</h2>
+          <div className="grid grid-flow-row grid-cols-3 gap-10">
+            {userPolls?.map((poll, index) => <Poll key={index} poll={poll} />)}
+          </div>
+        </div>
       </div>
-      <Slot>
-        <Slot.Header></Slot.Header>
-        <Slot.Sidebar>
-          <h1>Sidebar</h1>
-        </Slot.Sidebar>
-        <Slot.Content>
-          <h1>Content</h1>
-        </Slot.Content>
-        <Slot.Footer>
-          <h1>Footer</h1>
-        </Slot.Footer>
-      </Slot>
     </div>
   );
 }

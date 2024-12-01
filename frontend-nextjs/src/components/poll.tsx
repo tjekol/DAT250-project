@@ -18,8 +18,14 @@ interface PollProps {
   className?: string;
 }
 export function Poll({ poll, className }: PollProps) {
-  const { question, username, validUntil, isPublic, voteOptions, pollID } =
-    poll;
+  const {
+    question,
+    username,
+    validUntil,
+    public: isPublic,
+    voteOptions,
+    pollID,
+  } = poll;
   const date = new Date(validUntil).toLocaleDateString();
   return (
     <Card className={cn("", className)}>

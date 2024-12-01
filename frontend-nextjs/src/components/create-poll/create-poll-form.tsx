@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
 import { FieldInput } from "../form/input";
@@ -24,14 +25,17 @@ import {
 import Options from "./options";
 
 export default function CreatePoll() {
+  const queryClient = useQueryClient();
   const form = useForm({
     resolver: zodResolver(createPollSchema),
     defaultValues: createPollDefaultValues,
   });
 
-  const { execute, isExecuting } = useAction(createPollAction);
+  const { execute, isExecuting, hasSucceeded } = useAction(createPollAction);
 
-  console.log("FORM VALUES", form.getValues());
+  if (hasSucceeded) {
+    queryClient.invalidateQueries({ queryKey: ["polls"] });
+  }
   return (
     <Form {...form}>
       <form
