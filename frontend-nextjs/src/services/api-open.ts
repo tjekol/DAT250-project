@@ -2,6 +2,7 @@ import { Poll } from "../interfaces";
 import { api } from "./api";
 
 export async function getPolls() {
+  console.log("DEBUGGING IN POLLS");
   try {
     const response = await api.get<Poll[]>("/polls").then((res) => res.data);
     return response;

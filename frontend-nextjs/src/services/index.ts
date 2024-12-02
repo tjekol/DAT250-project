@@ -73,7 +73,13 @@ export async function castVote(
 
 // Temp solution to handle user creation
 export async function createUser() {
-  const user = await currentUser();
+  let user = await currentUser();
+  let maxRetries = 5;
+  while (!user?.username && maxRetries > 0) {
+    user = await currentUser();
+    maxRetries--;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
   const username = user?.username;
   const email = user?.emailAddresses?.[0]?.emailAddress || "dummy@email.com";
   if (!username) {
