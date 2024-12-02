@@ -1,6 +1,6 @@
 import { Poll } from "@/components/poll";
 import { NextPageProps } from "@/interfaces/navigation";
-import { getPolls } from "@/services/api-open";
+import { getPolls } from "@/services";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Page(props: NextPageProps) {
