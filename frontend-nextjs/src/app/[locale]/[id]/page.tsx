@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { NextPageProps } from "@/interfaces/navigation";
-import { getPoll } from "@/services/api-open";
+import { getPoll } from "@/services";
 import { getTranslations } from "next-intl/server";
 import VoteForm from "./vote.form";
 export default async function Page(props: NextPageProps) {

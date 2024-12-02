@@ -1,13 +1,13 @@
 "use client";
 
-import { getPolls } from "@/services/api-open";
+import { getPollsClientSide } from "@/services/api-open";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "./poll";
 
 export function Polls() {
   const { data: polls, isFetching } = useQuery({
     queryKey: ["polls"],
-    queryFn: getPolls,
+    queryFn: getPollsClientSide,
   });
 
   if (isFetching) {

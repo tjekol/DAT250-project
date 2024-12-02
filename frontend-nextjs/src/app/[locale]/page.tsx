@@ -3,7 +3,6 @@ import CreatePoll from "@/components/create-poll/create-poll-form";
 import { Polls } from "@/components/polls";
 import { Button } from "@/components/ui/button";
 import { NextPageProps } from "@/interfaces/navigation";
-import { getPolls } from "@/services/api-open";
 import { Link } from "@/utils/navigation";
 import { PATH } from "@/utils/navigation/config";
 import { currentUser } from "@clerk/nextjs/server";
@@ -33,8 +32,6 @@ export default async function Page(props: NextPageProps) {
       </div>
     );
   }
-
-  const polls = await getPolls();
 
   return (
     <div className="space-y-10">

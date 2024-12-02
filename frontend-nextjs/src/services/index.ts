@@ -73,7 +73,13 @@ export async function castVote(
 
 // Temp solution to handle user creation
 export async function createUser() {
-  const user = await currentUser();
+  let user = await currentUser();
+  let maxRetries = 5;
+  while (!user?.username && maxRetries > 0) {
+    user = await currentUser();
+    maxRetries--;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
   const username = user?.username;
   const email = user?.emailAddresses?.[0]?.emailAddress || "dummy@email.com";
   if (!username) {
@@ -88,6 +94,28 @@ export async function createUser() {
     return response.data;
   } catch (error) {
     console.error("Failed to create user:", error);
+    throw error;
+  }
+}
+
+export async function getPoll(id: string) {
+  try {
+    const response = await api
+      .get<Poll>(`/polls/${id}`)
+      .then((res) => res.data);
+    return response;
+  } catch (error) {
+    console.error("Failed to get poll:", error);
+    throw error;
+  }
+}
+
+export async function getPolls() {
+  try {
+    const response = await api.get<Poll[]>("/polls").then((res) => res.data);
+    return response;
+  } catch (error) {
+    console.error("Failed to get polls:", error);
     throw error;
   }
 }
