@@ -43,7 +43,16 @@ public class PollApplication {
 
     @Test
     public void testServerConnection() throws Exception {
-        ResponseEntity<String> response = restTemplate.getForEntity("/", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(USERS_ENDPOINT, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        restTemplate.getForEntity(POLLS_ENDPOINT, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        restTemplate.getForEntity(VOTES_ENDPOINT, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        restTemplate.getForEntity(VOTEOPS_ENDPOINT, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
